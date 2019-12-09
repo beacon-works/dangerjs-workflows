@@ -6,12 +6,12 @@ LABEL "com.github.actions.description"="Runs Danger JS action configured for Bea
 LABEL "com.github.actions.icon"="zap"
 LABEL "com.github.actions.color"="blue"
 
-RUN mkdir -p /usr/src/danger
-RUN git clone https://github.com/danger/danger-js.git
-COPY ./danger-js /usr/src/danger
 RUN apt-get update \
     apy-get upgrade -y \
     apt-get install -y git
+RUN mkdir -p /usr/src/danger
+RUN git clone https://github.com/danger/danger-js.git
+COPY ./danger-js /usr/src/danger
 RUN cd /usr/src/danger && \
     yarn && \
     yarn run build:fast && \
