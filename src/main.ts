@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import DangerChecks from './dangerfile';
+import { DangerChecks } from './dangerfile';
 
 try {
   // `who-to-greet` input defined in action metadata file
