@@ -2,7 +2,7 @@
 // Provides dev-time type structures for  `danger` - doesn't affect runtime.
 import { DangerDSLType } from '../node_modules/danger/distribution/dsl/DangerDSL';
 import { GitHubPRDSL } from '../node_modules/danger/distribution/dsl/GitHubDSL';
-declare var danger: DangerDSLType;
+declare let danger: DangerDSLType;
 export declare function message(message: string): void;
 export declare function warn(message: string): void;
 export declare function fail(message: string): void;
@@ -166,14 +166,14 @@ export class DangerChecks {
         .replace('```commit', '')
         .replace(backTicks, '');
 
-      console.log(
-        'strippedCodeBlock',
-        lastCodeBlock,
-        strippedCodeBlock,
-        strippedCodeBlock === '',
-        strippedCodeBlock === ' ',
-        !!strippedCodeBlock,
-      );
+      // console.log(
+      //   'strippedCodeBlock',
+      //   lastCodeBlock,
+      //   strippedCodeBlock,
+      //   strippedCodeBlock === '',
+      //   strippedCodeBlock === ' ',
+      //   !!strippedCodeBlock,
+      // );
 
       this.performSpellCheck(strippedCodeBlock, 'PR description');
 
