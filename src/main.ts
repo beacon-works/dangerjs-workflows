@@ -1,5 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
+import DangerChecks from './dangerfile';
 
 try {
   // `who-to-greet` input defined in action metadata file
@@ -10,6 +11,9 @@ try {
   // Get the JSON webhook payload for the event that triggered the workflow
   const payload = JSON.stringify(github.context.payload, undefined, 2);
   console.log(`The event payload: ${payload}`);
+
+  console.log('what is', DangerChecks);
+  //   new DangerChecks({ manualMergeTag: 'manual merge' }).run();
 } catch (error) {
   core.setFailed(error.message);
 }

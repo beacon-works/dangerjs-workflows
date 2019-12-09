@@ -57,7 +57,7 @@ export class DangerChecks {
     this.pr = danger.github.pr;
     this.prPull = { repo, owner, pull_number: number };
     this.prIssue = { repo, owner, issue_number: number };
-    this.prLabels = this.pr.labels.map(label => label.name);
+    this.prLabels = this.pr.labels ? this.pr.labels.map(label => label.name) : [];
     this.mergeCommitBlock = null;
   }
 
@@ -127,6 +127,7 @@ export class DangerChecks {
 
   // Rule: "No PR is too small to include a description of why you made a change"
   private checkPRDescription = (): void => {
+    const { manualMergeTag } = this.opts;
     const { body } = this.pr;
     const clubhouseTicketRegex = new RegExp(/(\/\/.*app\.clubhouse\.io\/beacon-works[\w/-]*)/);
 
@@ -139,7 +140,7 @@ export class DangerChecks {
       warn("<i>Is this PR related to a Clubhouse ticket? If so, don't forget to include a reference to it.</i>");
     }
 
-    if (this.prLabels.includes(this.opts.manualMergeTag)) {
+    if (this.prLabels.includes(manualMergeTag || '')) {
       return;
     }
 
@@ -147,7 +148,7 @@ export class DangerChecks {
 
     // matches every code block in the description that starts with ```commit
     const codeBlockRegex = new RegExp(/(`{3}commit)[\r\n]([a-z]*[\s\S]*?)[\r\n](`{3})$/, 'gm');
-    const codeBlocks: string[] = body.match(codeBlockRegex);
+    const codeBlocks: string[] = body.match(codeBlockRegex) || [];
 
     if (codeBlocks) {
       const backTicks = new RegExp(/`{3}/, 'g');
@@ -268,5 +269,3 @@ export class DangerChecks {
     });
   };
 }
-
-new DangerChecks({ manualMergeTag: 'manual merge' }).run();
