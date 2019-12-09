@@ -7,7 +7,7 @@ LABEL "com.github.actions.icon"="zap"
 LABEL "com.github.actions.color"="blue"
 
 RUN apt-get update \
-    apy-get upgrade -y \
+    apt-get upgrade -y \
     apt-get install -y git
 RUN mkdir -p /usr/src/danger
 RUN git clone https://github.com/danger/danger-js.git
