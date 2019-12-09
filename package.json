@@ -9,7 +9,8 @@
     "format-check": "prettier --check **/*.ts",
     "lint": "eslint src/**/*.ts",
     "pack": "ncc build lib/main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "all": "yarn format && yarn lint && yarn build && yarn pack"
   },
   "repository": {
     "type": "git",
