@@ -3,6 +3,7 @@ description: 'Runs Danger JS action configured for Beacon Works'
 inputs:
   manual-merge-label:
     description: 'The GitHub issue/label to use to disable the auto-merge feature'
+    required: true
     default: 'manual merge'
 runs:
   using: 'node12'

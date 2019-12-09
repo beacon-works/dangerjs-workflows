@@ -13,8 +13,7 @@ try {
   const payload = JSON.stringify(github.context.payload, undefined, 2);
   console.log(`The event payload: ${payload}`);
 
-  console.log('what is', DangerChecks);
-  //   new DangerChecks({ manualMergeTag: 'manual merge' }).run();
+  new DangerChecks({ manualMergeTag: 'manual merge' }).run();
 } catch (error) {
   core.setFailed(error.message);
 }
