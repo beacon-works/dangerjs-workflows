@@ -1,7 +1,6 @@
 /* eslint-disable */
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import * as danger from 'danger';
 import { DangerChecks } from './dangerfile';
 
 async function run() {
