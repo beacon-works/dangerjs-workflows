@@ -6,11 +6,16 @@ jobs:
     name: A job to say hello
     steps:
       - uses: actions/checkout@v1
+      - name: Danger
+        uses: danger/danger-js@9.2.6
       - name: Hello world action step
         uses: ./ # Uses an action in the root directory
         id: hello
         with:
           who-to-greet: 'Mona the Octocat'
+          manual-merge-label: 'manual merge'
       # Use the output from the `hello` step
       - name: Get the output time
         run: echo "The time was ${{ steps.hello.outputs.time }}"
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,3 +1,4 @@
+# https://help.github.com/en/actions/automating-your-workflow-with-github-actions/metadata-syntax-for-github-actions#about-yaml-syntax-for-github-actions
 name: 'Beacon Works'
 description: 'Runs Danger JS action configured for Beacon Works'
 inputs:
