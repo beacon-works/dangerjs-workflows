@@ -1,13 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-// Provides dev-time type structures for  `danger` - doesn't affect runtime.
-import { DangerDSLType } from '../node_modules/danger/distribution/dsl/DangerDSL';
-import { GitHubPRDSL } from '../node_modules/danger/distribution/dsl/GitHubDSL';
-declare let danger: DangerDSLType;
-export declare function message(message: string): void;
-export declare function warn(message: string): void;
-export declare function fail(message: string): void;
-export declare function markdown(message: string): void;
-// import { fail, danger, message, warn, GitHubPRDSL } from 'danger';
+import { fail, danger, message, warn, GitHubPRDSL } from 'danger';
 // this plugin spell checks the code changes in the PR.
 import spellcheck from 'danger-plugin-spellcheck';
 // this spell check is used to analyze the PR title and description
