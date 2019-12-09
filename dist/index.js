@@ -3364,9 +3364,6 @@ function checkMode (stat, options) {
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -3376,7 +3373,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable */
-const shelljs_1 = __importDefault(__webpack_require__(739));
+const shelljs_1 = __webpack_require__(739);
 const core = __importStar(__webpack_require__(470));
 const github = __importStar(__webpack_require__(469));
 try {
@@ -3384,12 +3381,12 @@ try {
     const nameToGreet = core.getInput('who-to-greet');
     const manualMergeTag = core.getInput('manual-merge-label');
     const path = '/usr/src/danger';
-    shelljs_1.default.mkdir(path);
-    shelljs_1.default.cd(path);
-    shelljs_1.default.exec('git clone https://github.com/danger/danger-js.git .');
-    shelljs_1.default.exec('yarn && yarn run build:fast');
-    shelljs_1.default.chmod('+x', 'distribution/commands/danger.js');
-    shelljs_1.default.ln('-s', '$(pwd)/distribution/commands/danger.js', path);
+    shelljs_1.mkdir(path);
+    shelljs_1.cd(path);
+    shelljs_1.exec('git clone https://github.com/danger/danger-js.git .');
+    shelljs_1.exec('yarn && yarn run build:fast');
+    shelljs_1.chmod('+x', 'distribution/commands/danger.js');
+    shelljs_1.ln('-s', '$(pwd)/distribution/commands/danger.js', path);
     console.log(`Hello ${nameToGreet}! ---- ${manualMergeTag}`);
     const time = new Date().toTimeString();
     core.setOutput('time', time);

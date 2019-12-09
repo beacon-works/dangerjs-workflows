@@ -1,5 +1,5 @@
 /* eslint-disable */
-import shell from 'shelljs';
+import { cd, chmod, exec, ln, mkdir } from 'shelljs';
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { DangerChecks } from './dangerfile';
@@ -10,12 +10,12 @@ try {
   const manualMergeTag = core.getInput('manual-merge-label');
 
   const path = '/usr/src/danger';
-  shell.mkdir(path);
-  shell.cd(path);
-  shell.exec('git clone https://github.com/danger/danger-js.git .');
-  shell.exec('yarn && yarn run build:fast');
-  shell.chmod('+x', 'distribution/commands/danger.js');
-  shell.ln('-s', '$(pwd)/distribution/commands/danger.js', path);
+  mkdir(path);
+  cd(path);
+  exec('git clone https://github.com/danger/danger-js.git .');
+  exec('yarn && yarn run build:fast');
+  chmod('+x', 'distribution/commands/danger.js');
+  ln('-s', '$(pwd)/distribution/commands/danger.js', path);
 
   console.log(`Hello ${nameToGreet}! ---- ${manualMergeTag}`);
   const time = new Date().toTimeString();
