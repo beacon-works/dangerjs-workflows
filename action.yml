@@ -7,10 +7,5 @@ inputs:
     required: true
     default: "manual merge"
 runs:
-  using: "docker"
-  image: "Dockerfile"
-  args:
-    - ${{ inputs.manual-merge-label}}
-# runs:
-#   using: 'node12'
-#   main: 'dist/index.js'
+  using: "node12"
+  main: "dist/index.js"
