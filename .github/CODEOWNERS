@@ -1,0 +1,5 @@
+# https://help.github.com/en/articles/about-code-owners
+
+* @beacon-works/github-actions-sandbox
+
+/.github/* @beacon-works/admin
