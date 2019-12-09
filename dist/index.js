@@ -6677,7 +6677,7 @@ InternalDecoderCesu8.prototype.end = function() {
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
 var ZipEntry = __webpack_require__(551),
-	Headers = __webpack_require__(181),
+	Headers = __webpack_require__(670),
 	Utils = __webpack_require__(643);
 
 module.exports = function (/*String|Buffer*/input, /*Number*/inputType) {
@@ -7202,10 +7202,53 @@ module.exports = Mark;
 
 /***/ }),
 /* 181 */
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
+/***/ (function(module, __unusedexports, __webpack_require__) {
 
-exports.EntryHeader = __webpack_require__(239);
-exports.MainHeader = __webpack_require__(602);
+"use strict";
+
+
+var Type = __webpack_require__(945);
+
+var _hasOwnProperty = Object.prototype.hasOwnProperty;
+var _toString       = Object.prototype.toString;
+
+function resolveYamlOmap(data) {
+  if (data === null) return true;
+
+  var objectKeys = [], index, length, pair, pairKey, pairHasKey,
+      object = data;
+
+  for (index = 0, length = object.length; index < length; index += 1) {
+    pair = object[index];
+    pairHasKey = false;
+
+    if (_toString.call(pair) !== '[object Object]') return false;
+
+    for (pairKey in pair) {
+      if (_hasOwnProperty.call(pair, pairKey)) {
+        if (!pairHasKey) pairHasKey = true;
+        else return false;
+      }
+    }
+
+    if (!pairHasKey) return false;
+
+    if (objectKeys.indexOf(pairKey) === -1) objectKeys.push(pairKey);
+    else return false;
+  }
+
+  return true;
+}
+
+function constructYamlOmap(data) {
+  return data !== null ? data : [];
+}
+
+module.exports = new Type('tag:yaml.org,2002:omap', {
+  kind: 'sequence',
+  resolve: resolveYamlOmap,
+  construct: constructYamlOmap
+});
 
 
 /***/ }),
@@ -33493,7 +33536,7 @@ function getNextPage (octokit, link, headers) {
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
 var Utils = __webpack_require__(643),
-    Headers = __webpack_require__(181),
+    Headers = __webpack_require__(670),
     Constants = Utils.Constants,
     Methods = __webpack_require__(880);
 
@@ -34464,7 +34507,7 @@ module.exports = new Schema({
   ],
   explicit: [
     __webpack_require__(913),
-    __webpack_require__(842),
+    __webpack_require__(181),
     __webpack_require__(947),
     __webpack_require__(100)
   ]
@@ -37136,6 +37179,11 @@ module.exports = function (/*String*/input) {
 
 "use strict";
 
+/* eslint-disable @typescript-eslint/camelcase */
+// Provides dev-time type structures for  `danger` - doesn't affect runtime.
+// import { DangerDSLType } from '../node_modules/danger/distribution/dsl/DangerDSL';
+// import { GitHubPRDSL } from '../node_modules/danger/distribution/dsl/GitHubDSL';
+// declare let danger: DangerDSLType;
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -37147,6 +37195,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const danger_1 = __webpack_require__(842);
 // import { fail, danger, message, warn, GitHubPRDSL } from 'danger';
 // this plugin spell checks the code changes in the PR.
 const danger_plugin_spellcheck_1 = __importDefault(__webpack_require__(514));
@@ -37180,7 +37229,7 @@ class DangerChecks {
             const requiredTeams = this.prLabels.filter(label => labels.includes(label));
             // TODO: add a check to verify a label does have a matching team before adding it to the api call.
             if (requiredTeams.length > 0) {
-                danger.github.api.pulls.createReviewRequest(Object.assign(Object.assign({}, this.prPull), { reviewers: [], team_reviewers: requiredTeams }));
+                danger_1.danger.github.api.pulls.createReviewRequest(Object.assign(Object.assign({}, this.prPull), { reviewers: [], team_reviewers: requiredTeams }));
             }
         };
         // Rule: "No PR is too small to include a title highlighting the changes you made"
@@ -37239,7 +37288,7 @@ class DangerChecks {
         };
         // Rule: "PR with [noOfApprovals] approvals should then be assigned to [teams]"
         this.addReviewTeamsBasedOnApprovals = (teams, noOfApprovals) => {
-            const { listReviews, createReviewRequest } = danger.github.api.pulls;
+            const { listReviews, createReviewRequest } = danger_1.danger.github.api.pulls;
             listReviews(this.prPull).then(resp => {
                 const { data } = resp;
                 if (data && data.length > 0) {
@@ -37265,12 +37314,12 @@ class DangerChecks {
                 }
                 // Append PR hash to the end of the title
                 const titleWithPRHash = `${title} (#${this.pr.number})`;
-                danger.github.api.pulls
+                danger_1.danger.github.api.pulls
                     .merge(Object.assign(Object.assign({}, this.prPull), { commit_title: titleWithPRHash, commit_message: this.mergeCommitBlock, merge_method: 'squash' }))
                     .then(resp => {
-                    danger.github.api.issues.createComment(Object.assign(Object.assign({}, this.prIssue), { body: resp.data.message }));
+                    danger_1.danger.github.api.issues.createComment(Object.assign(Object.assign({}, this.prIssue), { body: resp.data.message }));
                 })
-                    .catch(err => danger.github.api.issues.createComment(Object.assign(Object.assign({}, this.prIssue), { body: err })));
+                    .catch(err => danger_1.danger.github.api.issues.createComment(Object.assign(Object.assign({}, this.prIssue), { body: err })));
             }
         };
         this.addMetaDataAboutPR = () => {
@@ -37279,7 +37328,7 @@ class DangerChecks {
         };
         // Rule: "No PR is too small to include in the changelog"
         this.checkChangelog = () => {
-            const { modified_files, created_files } = danger.git;
+            const { modified_files, created_files } = danger_1.danger.git;
             const hasChangelog = modified_files.concat(created_files).includes('CHANGELOG.md');
             if (!hasChangelog) {
                 warn(`<i>Warning - You may have forgotten to update the CHANGELOG</i>`);
@@ -37296,9 +37345,9 @@ class DangerChecks {
             });
         };
         // tslint:disable-next-line
-        const { repo, owner, number } = danger.github.thisPR;
+        const { repo, owner, number } = danger_1.danger.github.thisPR;
         this.opts = opts;
-        this.pr = danger.github.pr;
+        this.pr = danger_1.danger.github.pr;
         this.prPull = { repo, owner, pull_number: number };
         this.prIssue = { repo, owner, issue_number: number };
         this.prLabels = this.pr.labels ? this.pr.labels.map(label => label.name) : [];
@@ -38226,7 +38275,14 @@ Object.defineProperty(module, 'exports', {
 module.exports = require("util");
 
 /***/ }),
-/* 670 */,
+/* 670 */
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+exports.EntryHeader = __webpack_require__(239);
+exports.MainHeader = __webpack_require__(602);
+
+
+/***/ }),
 /* 671 */,
 /* 672 */,
 /* 673 */,
@@ -44945,54 +45001,13 @@ if (false) {}
 
 /***/ }),
 /* 842 */
-/***/ (function(module, __unusedexports, __webpack_require__) {
+/***/ (function() {
 
 "use strict";
 
-
-var Type = __webpack_require__(945);
-
-var _hasOwnProperty = Object.prototype.hasOwnProperty;
-var _toString       = Object.prototype.toString;
-
-function resolveYamlOmap(data) {
-  if (data === null) return true;
-
-  var objectKeys = [], index, length, pair, pairKey, pairHasKey,
-      object = data;
-
-  for (index = 0, length = object.length; index < length; index += 1) {
-    pair = object[index];
-    pairHasKey = false;
-
-    if (_toString.call(pair) !== '[object Object]') return false;
-
-    for (pairKey in pair) {
-      if (_hasOwnProperty.call(pair, pairKey)) {
-        if (!pairHasKey) pairHasKey = true;
-        else return false;
-      }
-    }
-
-    if (!pairHasKey) return false;
-
-    if (objectKeys.indexOf(pairKey) === -1) objectKeys.push(pairKey);
-    else return false;
-  }
-
-  return true;
-}
-
-function constructYamlOmap(data) {
-  return data !== null ? data : [];
-}
-
-module.exports = new Type('tag:yaml.org,2002:omap', {
-  kind: 'sequence',
-  resolve: resolveYamlOmap,
-  construct: constructYamlOmap
-});
-
+// This file represents the module that is exposed as the danger API
+throw "\nHey there, it looks like you're trying to import the danger module. Turns out\nthat the code you write in a Dangerfile.js is actually a bit of a sneaky hack. \n\nWhen running Danger, the import or require for Danger is removed before the code\nis evaluated. Instead all of the imports are added to the global runtime, so if\nyou are importing Danger to use one of it's functions - you should instead just\nuse the global object for the root DSL elements.\n\nThere is a spectrum thread for discussion here:\n  - https://spectrum.chat/?t=0a005b56-31ec-4919-9a28-ced623949d4d\n";
+//# sourceMappingURL=danger.js.map
 
 /***/ }),
 /* 843 */,
