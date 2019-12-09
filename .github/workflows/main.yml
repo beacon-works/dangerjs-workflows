@@ -1,14 +1,14 @@
-on: [push]
+on: [push, pull_request]
 
 jobs:
   beacon_works_test:
     runs-on: ubuntu-latest
-    name: Beacon Works PR workflow
+    name: Beacon Works PR Workflow
     steps:
       - uses: actions/checkout@v1
-      - name: Hello world action step
+      - name: Run workflow checks on PRs
         uses: danger/danger-js@9.2.6
         with:
-          args: "--dangerfile ./src/dangerfile.ts"
+          args: "--dangerfile ./src/allPRs.ts"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
