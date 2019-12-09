@@ -1,7 +1,7 @@
 /* eslint-disable */
-import * as shell from 'shelljs';
-import * as core from '@actions/core';
-import * as github from '@actions/github';
+import shell from 'shelljs';
+import core from '@actions/core';
+import github from '@actions/github';
 import { DangerChecks } from './dangerfile';
 
 async function run() {
