@@ -17,6 +17,7 @@
     "plugin:prettier/recommended"
   ],
   "rules": {
+    "no-console": "warn",
     "@typescript-eslint/no-use-before-define": 0
   }
 }

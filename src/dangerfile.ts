@@ -166,14 +166,14 @@ export class DangerChecks {
         .replace('```commit', '')
         .replace(backTicks, '');
 
-      // console.log(
-      //   'strippedCodeBlock',
-      //   lastCodeBlock,
-      //   strippedCodeBlock,
-      //   strippedCodeBlock === '',
-      //   strippedCodeBlock === ' ',
-      //   !!strippedCodeBlock,
-      // );
+      console.log(
+        'strippedCodeBlock',
+        lastCodeBlock,
+        strippedCodeBlock,
+        strippedCodeBlock === '',
+        strippedCodeBlock === ' ',
+        !!strippedCodeBlock,
+      );
 
       this.performSpellCheck(strippedCodeBlock, 'PR description');
 

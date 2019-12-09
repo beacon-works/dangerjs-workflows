@@ -7698,8 +7698,7 @@ try {
     // Get the JSON webhook payload for the event that triggered the workflow
     const payload = JSON.stringify(github.context.payload, undefined, 2);
     console.log(`The event payload: ${payload}`);
-    console.log('what is', dangerfile_1.DangerChecks);
-    //   new DangerChecks({ manualMergeTag: 'manual merge' }).run();
+    new dangerfile_1.DangerChecks({ manualMergeTag: 'manual merge' }).run();
 }
 catch (error) {
     core.setFailed(error.message);
@@ -37215,14 +37214,7 @@ class DangerChecks {
                     .trim()
                     .replace('```commit', '')
                     .replace(backTicks, '');
-                // console.log(
-                //   'strippedCodeBlock',
-                //   lastCodeBlock,
-                //   strippedCodeBlock,
-                //   strippedCodeBlock === '',
-                //   strippedCodeBlock === ' ',
-                //   !!strippedCodeBlock,
-                // );
+                console.log('strippedCodeBlock', lastCodeBlock, strippedCodeBlock, strippedCodeBlock === '', strippedCodeBlock === ' ', !!strippedCodeBlock);
                 this.performSpellCheck(strippedCodeBlock, 'PR description');
                 this.mergeCommitBlock = strippedCodeBlock || null;
             }
