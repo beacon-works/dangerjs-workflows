@@ -1,7 +1,7 @@
 /* eslint-disable */
 import shell from 'shelljs';
-import core from '@actions/core';
-import github from '@actions/github';
+import * as core from '@actions/core';
+import * as github from '@actions/github';
 import { DangerChecks } from './dangerfile';
 
 async function run() {
@@ -14,6 +14,9 @@ async function run() {
     shell.mkdir(path);
     shell.cd(path);
     shell.exec('git clone https://github.com/danger/danger-js.git .');
+    shell.exec('yarn && yarn run build:fast');
+    shell.chmod('+x', 'distribution/commands/danger.js');
+    shell.ln('-s', '$(pwd)/distribution/commands/danger.js', path);
 
     console.log(`Hello ${nameToGreet}! ---- ${manualMergeTag}`);
     const time = new Date().toTimeString();
