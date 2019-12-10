@@ -4,7 +4,7 @@ on:
     types: [opened, edited, synchronize, reopened]
 
 jobs:
-  beacon_works_test:
+  beacon_works_pr_test:
     runs-on: ubuntu-latest
     name: Beacon Works PR Workflow
     steps:
