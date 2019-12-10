@@ -2,7 +2,10 @@
   "name": "dangerjs-workflows",
   "version": "0.0.1-alpha.0",
   "description": "Beacon Works DangerJS workflows.",
+  "main": "lib/main.js",
   "scripts": {
+    "build": "tsc",
+    "format": "prettier --write **/*.ts",
     "test-danger": "DANGER_GITHUB_API_TOKEN='' danger pr https://github.com/beacon-works/dangerjs-workflows/pull/1"
   },
   "repository": {
@@ -22,10 +25,17 @@
   },
   "homepage": "https://github.com/beacon-works/dangerjs-workflows#readme",
   "dependencies": {
+    "@actions/core": "^1.0.0",
+    "@actions/io": "^1.0.0",
+    "@actions/exec": "^1.0.0",
+    "@actions/github": "^1.0.0",
+    "@actions/tool-cache": "^1.0.0",
     "danger-plugin-spellcheck": "^1.5.0",
     "simple-spellchecker": "^1.0.0"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.13",
+    "@types/node": "^12.0.4",
     "@typescript-eslint/eslint-plugin": "^2.9.0",
     "@typescript-eslint/parser": "^2.9.0",
     "danger": "^9.2.9",
@@ -34,7 +44,10 @@
     "eslint-plugin-github": "^2.0.0",
     "eslint-plugin-jest": "^22.21.0",
     "eslint-plugin-prettier": "^3.1.1",
+    "jest": "^24.8.0",
+    "jest-circus": "^24.7.1",
     "prettier": "^1.19.1",
+    "ts-jest": "^24.0.2",
     "typescript": "^3.6.4"
   }
 }
