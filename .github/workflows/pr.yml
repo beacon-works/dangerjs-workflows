@@ -1,14 +1,23 @@
+name: danger/dangerjs
 on:
   push:
   pull_request:
     types: [opened, edited, synchronize, reopened]
 
 jobs:
-  beacon_works_pr_test:
+  allPRs:
     runs-on: ubuntu-latest
     name: Beacon Works PR Workflow
     steps:
       - uses: actions/checkout@v1
+      - name: Use Node.js 10.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+      - name: Install Yarn
+        run: npm install -g yarn
+      - name: Install Dependencies
+        run: yarn install
       - name: Run workflow checks on PRs
         uses: danger/danger-js@9.2.6
         with:
