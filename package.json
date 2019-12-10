@@ -3,7 +3,7 @@
   "version": "0.0.1-alpha.0",
   "description": "Beacon Works DangerJS workflows.",
   "scripts": {
-    "test-danger": "DANGER_GITHUB_API_TOKEN=1099547e66695cbb448ca75812bd723d8854da7c danger pr https://github.com/beacon-works/dangerjs-workflows/pull/1"
+    "test-danger": "DANGER_GITHUB_API_TOKEN='' danger pr https://github.com/beacon-works/dangerjs-workflows/pull/1"
   },
   "repository": {
     "type": "git",
