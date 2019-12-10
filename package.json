@@ -1,20 +1,13 @@
 {
-  "name": "dangerjs-action",
+  "name": "dangerjs-workflows",
   "version": "0.0.1-alpha.0",
-  "description": "Beacon Works DangerJS action.",
-  "main": "lib/main.js",
+  "description": "Beacon Works DangerJS workflows.",
   "scripts": {
-    "build": "tsc",
-    "format": "prettier --write **/*.ts",
-    "format-check": "prettier --check **/*.ts",
-    "lint": "eslint src/**/*.ts",
-    "ncc": "ncc build lib/main.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "all": "yarn format && yarn lint && yarn build && yarn ncc"
+    "test-danger": "DANGER_GITHUB_API_TOKEN='' danger pr https://github.com/beacon-works/dangerjs-workflows/pull/1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/beacon-works/dangerjs-action.git"
+    "url": "git+https://github.com/beacon-works/dangerjs-workflows.git"
   },
   "keywords": [
     "beacon",
@@ -25,21 +18,23 @@
   "author": "Beacon Works",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/beacon-works/dangerjs-action/issues"
+    "url": "https://github.com/beacon-works/dangerjs-workflows/issues"
   },
-  "homepage": "https://github.com/beacon-works/dangerjs-action#readme",
+  "homepage": "https://github.com/beacon-works/dangerjs-workflows#readme",
+  "dependencies": {
+    "danger-plugin-spellcheck": "^1.5.0",
+    "simple-spellchecker": "^1.0.0"
+  },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.9.0",
     "@typescript-eslint/parser": "^2.9.0",
     "danger": "^9.2.9",
-    "danger-plugin-spellcheck": "^1.5.0",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^6.7.0",
     "eslint-plugin-github": "^2.0.0",
     "eslint-plugin-jest": "^22.21.0",
     "eslint-plugin-prettier": "^3.1.1",
     "prettier": "^1.19.1",
-    "simple-spellchecker": "^1.0.0",
     "typescript": "^3.6.4"
   }
 }

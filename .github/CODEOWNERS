@@ -1,5 +1,5 @@
 # https://help.github.com/en/articles/about-code-owners
 
-* @beacon-works/github-actions-sandbox
+* @beacon-works/dangerjs-workflows
 
 /.github/* @beacon-works/admin
