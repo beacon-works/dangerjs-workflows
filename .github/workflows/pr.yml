@@ -1,6 +1,5 @@
 name: danger/dangerjs
 on:
-  push:
   pull_request:
     types: [opened, edited, synchronize, reopened]
 
