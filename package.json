@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "format": "prettier --write **/*.ts",
-    "test-danger": "DANGER_GITHUB_API_TOKEN=54aa70349e3918caac9969c04d3dc2cdb7570811 danger pr https://github.com/beacon-works/github-actions-sandbox/pull/22 --dangerfile ./src/allPRs.ts"
+    "test-danger": "DANGER_GITHUB_API_TOKEN= danger pr https://github.com/beacon-works/github-actions-sandbox/pull/22 --dangerfile ./src/allPRs.ts"
   },
   "repository": {
     "type": "git",
