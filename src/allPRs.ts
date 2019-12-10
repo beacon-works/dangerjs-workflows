@@ -120,7 +120,7 @@ export class DangerChecks {
     const startsWithLowerCase = new RegExp(/^[a-z]{1}/);
     const endsWithSpecialChar = new RegExp(/([./,;:'"])+$/);
 
-    console.log(this.pr);
+    // console.log(this.pr);
 
     if (title.length < 5) {
       warn('<i>Your PR title seems a bit short. Please provide a bit more context.</i>');
@@ -198,7 +198,7 @@ export class DangerChecks {
       const { data } = resp;
       if (data && data.length > 0) {
         const currentApprovals = data.filter(review => review.state === 'APPROVED').length;
-        console.log(currentApprovals);
+        // console.log(currentApprovals);
         if (currentApprovals >= noOfApprovals) {
           createReviewRequest({
             ...this.prPull,
