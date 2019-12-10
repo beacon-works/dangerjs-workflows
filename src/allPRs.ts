@@ -269,3 +269,5 @@ export class DangerChecks {
     });
   };
 }
+
+new DangerChecks({ manualMergeTag: 'manual merge' }).run();
