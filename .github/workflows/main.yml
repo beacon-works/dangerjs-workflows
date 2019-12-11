@@ -8,7 +8,7 @@ jobs:
     name: beacon-works/dangerjs-checks
     steps:
       - uses: actions/checkout@v1
-      - name: Run workflow checks on PRs
+      - name: Run dangerjs checks
         uses: ./
         # uses: beacon-works/dangerjs-workflows
         with:
