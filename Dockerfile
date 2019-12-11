@@ -6,4 +6,6 @@ RUN yarn global add danger
 
 RUN yarn
 
-ENTRYPOINT ["danger --dangerfile ./dangerfile.ts", "ci"]
+ENTRYPOINT ["ls"]
+
+# ENTRYPOINT ["danger --dangerfile ./dangerfile.ts", "ci"]
