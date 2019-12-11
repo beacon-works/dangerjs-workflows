@@ -8,4 +8,7 @@ ADD . /beacon/workflows
 
 RUN yarn install && yarn cache clean
 
-ENTRYPOINT echo "Hello $1"
+RUN echo "$1 ---"
+RUN echo "$dangerfile ---"
+
+ENTRYPOINT echo Hello
