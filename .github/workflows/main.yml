@@ -3,9 +3,9 @@ on:
     types: [opened, edited, synchronize, reopened]
 
 jobs:
-  beacon_works_main_test:
+  pr-checks:
     runs-on: ubuntu-latest
-    name: Beacon Works Workflow
+    name: beacon-works/dangerjs-checks
     steps:
       - uses: actions/checkout@v1
       - name: Run workflow checks on PRs
