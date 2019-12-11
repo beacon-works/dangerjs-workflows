@@ -30,12 +30,28 @@ export interface PRPull extends ThisPR {
   pull_number: number;
 }
 
+export interface Team {
+  name: string;
+  id: number;
+  node_id: string;
+  slug: string;
+  description: string;
+  privacy: string;
+  url: string;
+  html_url: string;
+  members_url: string;
+  repositories_url: string;
+  permission: string;
+}
+
 // GitHubPRDSL: https://danger.systems/js/reference.html#GitHubPRDSL
 export interface ExtendedGitHubPRDSL extends GitHubPRDSL {
   labels?: GitHubLabel[];
   mergeable?: boolean;
   mergeable_state?: string;
   rebaseable?: boolean;
+  requested_reviewers?: Object[];
+  requested_teams?: Team[];
 }
 
 export interface DangerOptions {
@@ -57,7 +73,7 @@ export class DangerChecks {
     this.pr = danger.github.pr;
     this.prPull = { repo, owner, pull_number: number };
     this.prIssue = { repo, owner, issue_number: number };
-    this.prLabels = this.pr.labels ? this.pr.labels.map(label => label.name) : [];
+    this.prLabels = this.pr.labels ? this.pr.labels.map(label => label.name.toLowerCase()) : [];
     this.mergeCommitBlock = null;
   }
 
@@ -71,14 +87,14 @@ export class DangerChecks {
 
       spellcheck({
         codeSpellCheck: ['**/*.tsx', '**/*.ts', '**/*.jsx', '**/*.js'],
-        // ignore: ['dangerjs', 'github'],
+        ignore: ['camelcase', 'dangerfile', 'dangerjs', 'github', 'mergeable', 'prdsl', 'rebaseable', 'workflow'],
         whitelistFiles: ['README.md', 'dangerfile.ts', '.github/pull_request_template.md'],
       });
 
       this.checkPRTitle();
       this.checkPRDescription();
       // this.checkChangelog();
-      // this.addReviewTeamsBasedOnApprovals(['qa'], 2);
+      this.addReviewTeamsBasedOnApprovals(['qa'], 2);
       this.addMetaDataAboutPR();
       this.autoMergePullRequest(this.opts.manualMergeTag);
     }
@@ -140,9 +156,7 @@ export class DangerChecks {
       warn("<i>Is this PR related to a Clubhouse ticket? If so, don't forget to include a reference to it.</i>");
     }
 
-    if (this.prLabels.includes(manualMergeTag || '')) {
-      return;
-    }
+    if (this.prLabels.includes(manualMergeTag || '')) return;
 
     // console.log(body);
 
@@ -151,23 +165,18 @@ export class DangerChecks {
     const codeBlocks: string[] = body.match(codeBlockRegex) || [];
 
     if (codeBlocks) {
-      const backTicks = new RegExp(/`{3}/, 'g');
+      const backTicksWithCommitBlock: RegExp = new RegExp(/(`{3}commit)(\r\n)/, 'g');
+      const backTicks: RegExp = new RegExp(/(`{3})/, 'g');
+
       const lastCodeBlock: string = codeBlocks[codeBlocks.length - 1];
       const strippedCodeBlock: string = lastCodeBlock
         .trim()
-        .replace('```commit', '')
+        .replace(backTicksWithCommitBlock, '')
         .replace(backTicks, '');
 
-      console.log(
-        'strippedCodeBlock',
-        lastCodeBlock,
-        strippedCodeBlock,
-        strippedCodeBlock === '',
-        strippedCodeBlock === ' ',
-        !!strippedCodeBlock,
-      );
-
-      this.performSpellCheck(strippedCodeBlock, 'PR description');
+      if (strippedCodeBlock) {
+        this.performSpellCheck(strippedCodeBlock, 'PR description');
+      }
 
       this.mergeCommitBlock = strippedCodeBlock || null;
     } else {
@@ -180,11 +189,16 @@ export class DangerChecks {
   // Rule: "PR with [noOfApprovals] approvals should then be assigned to [teams]"
   private addReviewTeamsBasedOnApprovals = (teams: string[], noOfApprovals: number): void => {
     const { listReviews, createReviewRequest } = danger.github.api.pulls;
+    const { requested_teams } = this.pr;
+
+    // Return if the team has already been requested
+    if (requested_teams && requested_teams.some(team => teams.includes[team.slug])) return;
 
     listReviews(this.prPull).then(resp => {
       const { data } = resp;
       if (data && data.length > 0) {
         const currentApprovals = data.filter(review => review.state === 'APPROVED').length;
+        // console.log(currentApprovals);
         if (currentApprovals >= noOfApprovals) {
           createReviewRequest({
             ...this.prPull,
@@ -198,10 +212,23 @@ export class DangerChecks {
 
   // Rule: "PR is merged automatically when all checks and approvals are met, unless it has the manual merge tag/label"
   private autoMergePullRequest = (manualMergeTag?: string): void => {
-    const { locked, merged, mergeable, mergeable_state, rebaseable, title } = this.pr;
-    if (manualMergeTag && this.prLabels.includes(manualMergeTag)) {
-      return;
-    }
+    const {
+      locked,
+      merged,
+      mergeable,
+      mergeable_state,
+      rebaseable,
+      requested_reviewers,
+      requested_teams,
+      title,
+    } = this.pr;
+
+    if (manualMergeTag && this.prLabels.includes(manualMergeTag)) return;
+    if (this.prLabels.includes('wip')) return;
+
+    // Return if there are still outstanding reviews requested
+    if (requested_reviewers && requested_reviewers.length >= 1) return;
+
     // console.log(this.pr);
 
     if (!locked && !merged && mergeable && mergeable_state !== 'blocked' && rebaseable) {
