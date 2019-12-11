@@ -1,5 +1,5 @@
-FROM node:12
+FROM node:10-slim
 
 COPY . .
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["npx", "--package", "danger@beta", "--package","typescript", "--package", "@babel/cli", "danger", "ci"]
