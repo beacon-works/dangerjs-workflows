@@ -2,4 +2,8 @@ FROM node:slim
 
 COPY . .
 
-ENTRYPOINT ["/entrypoint.sh"]
+RUN yarn global add danger
+
+RUN yarn
+
+ENTRYPOINT ["danger", "--dangerfile './dangerfile.ts'", "ci"]
