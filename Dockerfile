@@ -1,4 +1,4 @@
-FROM node:slim
+FROM alpine:3.10
 
 COPY . .
 
