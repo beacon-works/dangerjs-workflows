@@ -8,4 +8,4 @@ ADD . /beacon/workflows
 
 RUN yarn install && yarn cache clean
 
-ENTRYPOINT ["echo Hello $1"]
+ENTRYPOINT echo "Hello $1"
