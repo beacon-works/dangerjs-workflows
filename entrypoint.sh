@@ -9,5 +9,5 @@ yarn global add danger
 yarn
 
 # Run danger
-danger --dangerfile "./dangerfile.ts" ci
+danger --dangerfile "dangerfile.ts" ci
 
