@@ -12,6 +12,6 @@ jobs:
         uses: ./
         # uses: beacon-works/dangerjs-workflows
         with:
-          myInput: 'test input --- cit'
+          dangerfile: "./dangerfile.ts"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
