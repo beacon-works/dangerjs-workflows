@@ -1,5 +1,10 @@
-FROM node:10-slim
+FROM node:slim
 
-COPY . .
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
 
-ENTRYPOINT ["npx", "--package", "danger", "--package","typescript", "--package", "@babel/cli", "--package", "danger-plugin-spellcheck", "--package", "simple-spellchecker", "danger", "ci", "--dangerfile", "./dangerfile.ts"]
+COPY . /usr/src/app/
+RUN npm install yarn -g
+RUN yarn install 
+
+ENTRYPOINT ["danger", "ci", "--dangerfile", "./dangerfile.ts"]
