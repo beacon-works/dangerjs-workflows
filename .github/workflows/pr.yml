@@ -17,10 +17,11 @@ jobs:
       - name: Install Yarn
         run: npm install -g yarn
       - name: Install Dependencies
-        run: yarn install
+        run: yarn install  --frozen-lockfile
       - name: Run workflow checks on PRs
-        uses: danger/danger-js@9.2.6
-        with:
-          args: '--dangerfile ./src/allPRs.ts'
+        run: yarn danger ci --dangerfile ./src/allPRs.ts
+        # uses: danger/danger-js@9.2.6
+        # with:
+        #   args: '--dangerfile ./src/allPRs.ts'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
