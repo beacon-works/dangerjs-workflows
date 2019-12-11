@@ -8,8 +8,8 @@ jobs:
     name: Beacon Works Workflow
     steps:
       - uses: actions/checkout@v1
+      - uses: ./
       - name: Run workflow checks on PRs
-        uses: ./
         uses: beacon-works/dangerjs-workflows
         with:
           myInput: 'test input --- cit'
