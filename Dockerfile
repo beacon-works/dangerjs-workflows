@@ -8,4 +8,4 @@ ADD . /beacon/workflows
 
 RUN yarn install && yarn cache clean
 
-ENTRYPOINT cd /beacon/workflows && yarn danger ci
+ENTRYPOINT cd /beacon/workflows && yarn danger ci && echo "$1"
