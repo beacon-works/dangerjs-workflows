@@ -1,5 +1,5 @@
 FROM node:slim
 
-COPY entrypoint.sh /entrypoint.sh
+COPY . .
 
 ENTRYPOINT ["/entrypoint.sh"]
