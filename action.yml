@@ -1,0 +1,13 @@
+name: "Beacon Works PR Workflow"
+description: ""
+author: "Beacon Works"
+inputs:
+  my-input:
+    description: "Input to use"
+    required: true
+    default: "world"
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - ${{ inputs.my-input }}
