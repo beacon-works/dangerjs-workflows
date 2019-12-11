@@ -87,7 +87,7 @@ export class DangerChecks {
 
       spellcheck({
         codeSpellCheck: ['**/*.tsx', '**/*.ts', '**/*.jsx', '**/*.js'],
-        ignore: ['camelcase', 'dangerfile', 'dangerjs', 'github', 'mergeable', 'prdsl', 'rebaseable'],
+        ignore: ['camelcase', 'dangerfile', 'dangerjs', 'github', 'mergeable', 'prdsl', 'rebaseable', 'workflow'],
         whitelistFiles: ['README.md', 'dangerfile.ts', '.github/pull_request_template.md'],
       });
 
