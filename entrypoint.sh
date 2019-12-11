@@ -2,6 +2,5 @@
 
 echo "Hello $1"
 
-# Run danger
-danger ci --dangerfile $1
+yarn danger ci --dangerfile $1
 
