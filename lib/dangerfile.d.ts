@@ -18,11 +18,26 @@ export interface PRIssue extends ThisPR {
 export interface PRPull extends ThisPR {
     pull_number: number;
 }
+export interface Team {
+    name: string;
+    id: number;
+    node_id: string;
+    slug: string;
+    description: string;
+    privacy: string;
+    url: string;
+    html_url: string;
+    members_url: string;
+    repositories_url: string;
+    permission: string;
+}
 export interface ExtendedGitHubPRDSL extends GitHubPRDSL {
     labels?: GitHubLabel[];
     mergeable?: boolean;
     mergeable_state?: string;
     rebaseable?: boolean;
+    requested_reviewers?: Object[];
+    requested_teams?: Team[];
 }
 export interface DangerOptions {
     manualMergeTag?: string;

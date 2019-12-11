@@ -1,0 +1,17 @@
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  pr-checks:
+    runs-on: ubuntu-latest
+    name: beacon-works/dangerjs-checks
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run dangerjs checks
+        uses: ./
+        # uses: beacon-works/dangerjs-workflows
+        with:
+          dangerfile: "./dangerfile.ts"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
