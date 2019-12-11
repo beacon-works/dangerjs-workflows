@@ -8,6 +8,6 @@ ADD . /beacon/workflows
 
 RUN yarn install && yarn cache clean
 
-CMD [ "sh", "-c", "yarn danger ci" ]  
+ENTRYPOINT [ "sh", "-c", "yarn danger ci" ]  
 
 # ENTRYPOINT ["/beacon/workflows/entrypoint.sh"]
