@@ -162,7 +162,7 @@ export class DangerChecks {
 
     // matches every code block in the description that starts with ```commit
     const codeBlockRegex = new RegExp(/(`{3}commit)[\r\n]([a-z]*[\s\S]*?)[\r\n](`{3})$/, 'gm');
-    const codeBlocks: string[] = body.match(codeBlockRegex) || [];
+    const codeBlocks: string[] | null = body.match(codeBlockRegex) || null;
 
     if (codeBlocks) {
       const backTicksWithCommitBlock: RegExp = new RegExp(/(`{3}commit)(\r\n)/, 'g');
