@@ -37,6 +37,6 @@ Considerations for Future Steps:
 
 When working on extending or improving the dangerjs configuration, you can test your changes against an existing PR locally in your cli. To do this, you'll need to create a [personal access token](https://github.com/settings/tokens) in GitHub. Then you can run the following command, replacing _[PERSONAL_ACCESS_TOKEN]_ with your token and the _[PR_NUMBER]_ with the PR number you want to test against.
 
-`DANGER_GITHUB_API_TOKEN=[PERSONAL_ACCESS_TOKEN] danger pr https://github.com/beacon-works/github-actions-sandbox/pull/[PR_NUMBER]`
+`DANGER_GITHUB_API_TOKEN=[PERSONAL_ACCESS_TOKEN] danger pr https://github.com/:username/:repo/pull/[PR_NUMBER]`
 
 _Note: If the danger command is not found, you'll need to install the package globally_
