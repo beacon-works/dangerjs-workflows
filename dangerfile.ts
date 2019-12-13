@@ -5,6 +5,8 @@ import spellcheck from 'danger-plugin-spellcheck';
 // this spell check is used to analyze the PR title and description
 import * as SimpleSpellChecker from 'simple-spellchecker';
 
+import { whitelistedWords } from './whitelistedWords';
+
 const dictionary = SimpleSpellChecker.getDictionarySync('en-US');
 
 interface GitHubLabel {
@@ -87,7 +89,7 @@ export class DangerChecks {
 
       spellcheck({
         codeSpellCheck: ['**/*.tsx', '**/*.ts', '**/*.jsx', '**/*.js'],
-        ignore: ['camelcase', 'dangerfile', 'dangerjs', 'github', 'mergeable', 'prdsl', 'rebaseable', 'workflow'],
+        ignore: [...whitelistedWords],
         whitelistFiles: ['README.md', 'dangerfile.ts', '.github/pull_request_template.md'],
       });
 
@@ -282,18 +284,24 @@ export class DangerChecks {
   };
 
   private performSpellCheck = (str: string, location: string): void => {
-    if (!str || str === ' ') return;
-    return str.split(' ').forEach(word => {
-      const { misspelled, suggestions } = dictionary.checkAndSuggest(word, 6, 3);
+    if (str === null) return;
+    const wordRegex: RegExp = new RegExp(/\w+/, 'gi');
+    const words = str.match(wordRegex);
 
-      if (misspelled) {
-        warn(
-          `Potential typo in ${location}: <b>${word}</b>.<br/> Did you maybe mean one of these: <i>${suggestions.join(
-            ', ',
-          )}</i>?`,
-        );
-      }
-    });
+    if (words) {
+      words.forEach(word => {
+        const { misspelled, suggestions } = dictionary.checkAndSuggest(word, 6, 3);
+
+        if (misspelled) {
+          console.log(misspelled, word, suggestions);
+          const idea =
+            suggestions.length > 0 ? `<br/>Did you maybe mean one of these: <i>${suggestions.join(', ')}</i>?` : '';
+          const message = `Potential typo in ${location}: <b>${word}</b>. ${idea}`;
+
+          warn(message);
+        }
+      });
+    }
   };
 }
 
