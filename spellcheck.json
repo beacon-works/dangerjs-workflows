@@ -8,11 +8,14 @@
     "dangerjs",
     "eslint",
     "github",
+    "lfs",
     "jest",
     "mergeable",
     "prdsl",
+    "readme",
     "rebaseable",
-    "workflow"
+    "workflow",
+    "workflows"
   ],
   "whitelistFiles": ["README.md", "dangerfile.ts", ".github/pull_request_template.md"]
 }
