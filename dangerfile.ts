@@ -5,7 +5,7 @@ import spellcheck from 'danger-plugin-spellcheck';
 // this spell check is used to analyze the PR title and description
 import * as SimpleSpellChecker from 'simple-spellchecker';
 
-import { whitelistedWords } from './whitelistedWords';
+import settings from './spellcheck.json';
 
 const dictionary = SimpleSpellChecker.getDictionarySync('en-US');
 
@@ -87,11 +87,7 @@ export class DangerChecks {
         this.addReviewTeamsBasedOnLabels(['api', 'ui']);
       }
 
-      spellcheck({
-        codeSpellCheck: ['**/*.tsx', '**/*.ts', '**/*.jsx', '**/*.js'],
-        ignore: [...whitelistedWords],
-        whitelistFiles: ['README.md', 'dangerfile.ts', '.github/pull_request_template.md'],
-      });
+      spellcheck(settings);
 
       this.checkPRTitle();
       this.checkPRDescription();
@@ -231,8 +227,6 @@ export class DangerChecks {
     // Return if there are still outstanding reviews requested
     if (requested_reviewers && requested_reviewers.length >= 1) return;
 
-    // console.log(this.pr);
-
     if (!locked && !merged && mergeable && mergeable_state !== 'blocked' && rebaseable) {
       // TODO: Ensure there is a commit code block we can use for the commit.
       if (!this.mergeCommitBlock) {
@@ -283,6 +277,7 @@ export class DangerChecks {
     }
   };
 
+  // performs spellcheck on PR title and description
   private performSpellCheck = (str: string, location: string): void => {
     if (str === null) return;
     const wordRegex: RegExp = new RegExp(/\w+/, 'gi');
@@ -290,10 +285,11 @@ export class DangerChecks {
 
     if (words) {
       words.forEach(word => {
-        const { misspelled, suggestions } = dictionary.checkAndSuggest(word, 6, 3);
+        // early exit if word is on the ignore list.
+        if (settings.ignore.includes(word.toLowerCase())) return;
 
+        const { misspelled, suggestions } = dictionary.checkAndSuggest(word, 6, 3);
         if (misspelled) {
-          console.log(misspelled, word, suggestions);
           const idea =
             suggestions.length > 0 ? `<br/>Did you maybe mean one of these: <i>${suggestions.join(', ')}</i>?` : '';
           const message = `Potential typo in ${location}: <b>${word}</b>. ${idea}`;

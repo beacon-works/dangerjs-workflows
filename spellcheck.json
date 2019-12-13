@@ -1,0 +1,18 @@
+{
+  "codeSpellCheck": ["**/*.tsx", "**/*.ts", "**/*.jsx", "**/*.js"],
+  "ignore": [
+    "app",
+    "themeprovider",
+    "camelcase",
+    "dangerfile",
+    "dangerjs",
+    "eslint",
+    "github",
+    "jest",
+    "mergeable",
+    "prdsl",
+    "rebaseable",
+    "workflow"
+  ],
+  "whitelistFiles": ["README.md", "dangerfile.ts", ".github/pull_request_template.md"]
+}

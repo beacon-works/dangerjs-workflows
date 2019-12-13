@@ -6,6 +6,7 @@
     "declaration": true,
     "strict": true,
     "noImplicitAny": false,
+    "resolveJsonModule": true,
     "esModuleInterop": true
   },
   "exclude": ["__test__", "lib", "node_modules"]
