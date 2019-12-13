@@ -4,9 +4,8 @@
   "description": "Beacon Works DangerJS workflows.",
   "main": "lib/main.js",
   "scripts": {
-    "build": "tsc",
-    "format": "prettier --write **/*.ts",
-    "test-danger": "DANGER_GITHUB_API_TOKEN= danger pr https://github.com/beacon-works/github-actions-sandbox/pull/22 --dangerfile ./src/allPRs.ts"
+    "lint": "eslint --ext .ts",
+    "format": "prettier --write **/*.ts"
   },
   "repository": {
     "type": "git",
