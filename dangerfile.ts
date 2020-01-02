@@ -190,7 +190,7 @@ export class DangerChecks {
     const { requested_teams } = this.pr;
 
     // Return if the team has already been requested
-    if (requested_teams && requested_teams.some(team => teams.includes[team.slug])) return;
+    if (requested_teams && requested_teams.some(team => teams.includes(team.slug))) return;
 
     listReviews(this.prPull).then(resp => {
       const { data } = resp;
