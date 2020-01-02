@@ -200,8 +200,8 @@ export class DangerChecks {
         if (currentApprovals >= noOfApprovals) {
           createReviewRequest({
             ...this.prPull,
-            reviewers: [],
-            team_reviewers: teams,
+            reviewers: ['vinicius-vilacalara'],
+            team_reviewers: [],
           });
         }
       }
