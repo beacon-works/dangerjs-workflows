@@ -57,7 +57,9 @@ export interface ExtendedGitHubPRDSL extends GitHubPRDSL {
 }
 
 export interface DangerOptions {
-  manualMergeTag?: string;
+  manualMergeTag: string;
+  noQaTag: string;
+  workInProgressTag: string;
 }
 
 export class DangerChecks {
@@ -82,17 +84,14 @@ export class DangerChecks {
   // GitHub API: https://octokit.github.io/rest.js
   public run = (): void => {
     if (this.pr.state === 'open') {
-      // -- do stuff the first time a PR is created.
-      if (this.pr.created_at === this.pr.updated_at) {
-        this.addReviewTeamsBasedOnLabels(['api', 'ui']);
-      }
-
       spellcheck(settings);
 
       this.checkPRTitle();
       this.checkPRDescription();
       // this.checkChangelog();
-      this.addReviewTeamsBasedOnApprovals(['qa'], 2);
+      if (!this.prLabels.includes(this.opts.noQaTag)) {
+        this.addReviewTeamsBasedOnApprovals(['qa'], 2);
+      }
       this.addMetaDataAboutPR();
       this.autoMergePullRequest(this.opts.manualMergeTag);
     }
@@ -208,7 +207,7 @@ export class DangerChecks {
     });
   };
 
-  // Rule: "PR is merged automatically when all checks and approvals are met, unless it has the manual merge tag/label"
+  // Rule: "PR is merged automatically when all checks and approvals are met, unless it has the 'manual merge' or 'wip' tag/label"
   private autoMergePullRequest = (manualMergeTag?: string): void => {
     const {
       locked,
@@ -222,7 +221,7 @@ export class DangerChecks {
     } = this.pr;
 
     if (manualMergeTag && this.prLabels.includes(manualMergeTag)) return;
-    if (this.prLabels.includes('wip')) return;
+    if (this.prLabels.includes(this.opts.workInProgressTag)) return;
 
     // Return if there are still outstanding reviews requested
     if (requested_reviewers && requested_reviewers.length >= 1) return;
@@ -236,7 +235,7 @@ export class DangerChecks {
         return;
       }
 
-      // Append PR hash to the end of the title
+      // Append PR hash to the end of the title, like how GitHub does it by default.
       const titleWithPRHash = `${title} (#${this.pr.number})`;
 
       danger.github.api.pulls
@@ -301,4 +300,4 @@ export class DangerChecks {
   };
 }
 
-new DangerChecks({ manualMergeTag: 'manual merge' }).run();
+new DangerChecks({ manualMergeTag: 'manual merge', noQaTag: 'no-qa', workInProgressTag: 'wip' }).run();
