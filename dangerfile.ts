@@ -68,7 +68,7 @@ export class DangerChecks {
   private prPull: PRPull;
   private prIssue: PRIssue;
   private prLabels: string[];
-  private mergeCommitBlock: string | null;
+  private mergeCommitBlock: string | undefined;
 
   constructor(opts: DangerOptions) {
     // tslint:disable-next-line
@@ -78,7 +78,7 @@ export class DangerChecks {
     this.prPull = { repo, owner, pull_number: number };
     this.prIssue = { repo, owner, issue_number: number };
     this.prLabels = this.pr.labels ? this.pr.labels.map(label => label.name.toLowerCase()) : [];
-    this.mergeCommitBlock = null;
+    this.mergeCommitBlock = undefined;
   }
 
   // GitHub API: https://octokit.github.io/rest.js
@@ -175,10 +175,10 @@ export class DangerChecks {
         this.performSpellCheck(strippedCodeBlock, 'PR description');
       }
 
-      this.mergeCommitBlock = strippedCodeBlock || null;
+      this.mergeCommitBlock = strippedCodeBlock || undefined;
     } else {
       fail(
-        'It looks like you forgot to include a commit code block at the end of your PR description. Simply create a code block that starts with <i>```commit</i> containing your commit body. I use this as your commit body once your PR is ready to be merged.',
+        "Oops! It looks like you're missing a commit block in the description of your PR. I use this to auto-merge your PR. Simply create a code block starting with <i>```commit</i> at the bottom of your description. Include a longer commit message inside, if necessary—otherwise, leave it as an empty code block.",
       );
     }
   };
@@ -227,14 +227,6 @@ export class DangerChecks {
     if (requested_reviewers && requested_reviewers.length >= 1) return;
 
     if (!locked && !merged && mergeable && mergeable_state !== 'blocked' && rebaseable) {
-      // TODO: Ensure there is a commit code block we can use for the commit.
-      if (!this.mergeCommitBlock) {
-        fail(
-          "Oops! It looks like you're missing a commit block in the description of your PR. Simply create a code block at the bottom of your description with your commit message. I use this when I auto-merge your PR.",
-        );
-        return;
-      }
-
       // Append PR hash to the end of the title, like how GitHub does it by default.
       const titleWithPRHash = `${title} (#${this.pr.number})`;
 
