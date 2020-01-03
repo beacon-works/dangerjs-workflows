@@ -15,3 +15,4 @@ jobs:
           dangerfile: "./dangerfile.ts"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.BEACON_BOT_PERSONAL_ACCESS_TOKEN }}
