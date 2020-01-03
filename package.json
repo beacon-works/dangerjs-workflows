@@ -5,7 +5,8 @@
   "main": "lib/main.js",
   "scripts": {
     "lint": "eslint --ext .ts",
-    "format": "./node_modules/.bin/prettier --write **/*.ts"
+    "format": "./node_modules/.bin/prettier --write **/*.ts",
+    "pre-push": "yarn lint && yarn test"
   },
   "repository": {
     "type": "git",
