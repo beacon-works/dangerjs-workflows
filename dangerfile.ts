@@ -89,10 +89,13 @@ export class DangerChecks {
       this.checkPRTitle();
       this.checkPRDescription();
       // this.checkChangelog();
+      this.addMetaDataAboutPR();
+
+      if (this.prLabels.includes(this.opts.workInProgressTag)) return;
+
       if (!this.prLabels.includes(this.opts.noQaTag)) {
         this.addReviewTeamsBasedOnApprovals(['qa'], 2);
       }
-      this.addMetaDataAboutPR();
       this.autoMergePullRequest(this.opts.manualMergeTag);
     }
   };
@@ -221,7 +224,6 @@ export class DangerChecks {
     } = this.pr;
 
     if (manualMergeTag && this.prLabels.includes(manualMergeTag)) return;
-    if (this.prLabels.includes(this.opts.workInProgressTag)) return;
 
     // Return if there are still outstanding reviews requested
     if (requested_reviewers && requested_reviewers.length >= 1) return;
