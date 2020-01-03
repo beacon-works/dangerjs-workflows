@@ -52,7 +52,7 @@ export interface ExtendedGitHubPRDSL extends GitHubPRDSL {
   mergeable?: boolean;
   mergeable_state?: string;
   rebaseable?: boolean;
-  requested_reviewers?: Object[];
+  requested_reviewers?: object[];
   requested_teams?: Team[];
 }
 
@@ -162,8 +162,8 @@ export class DangerChecks {
     const codeBlocks: string[] | null = body.match(codeBlockRegex) || null;
 
     if (codeBlocks) {
-      const backTicksWithCommitBlock: RegExp = new RegExp(/(`{3}commit)(\r\n)/, 'g');
-      const backTicks: RegExp = new RegExp(/(`{3})/, 'g');
+      const backTicksWithCommitBlock = new RegExp(/(`{3}commit)(\r\n)/, 'g');
+      const backTicks = new RegExp(/(`{3})/, 'g');
 
       const lastCodeBlock: string = codeBlocks[codeBlocks.length - 1];
       const strippedCodeBlock: string = lastCodeBlock
@@ -279,7 +279,7 @@ export class DangerChecks {
   // performs spellcheck on PR title and description
   private performSpellCheck = (str: string, location: string): void => {
     if (str === null) return;
-    const wordRegex: RegExp = new RegExp(/\w+/, 'gi');
+    const wordRegex = new RegExp(/\w+/, 'gi');
     const words = str.match(wordRegex);
 
     if (words) {

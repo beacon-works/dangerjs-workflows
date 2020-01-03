@@ -4,9 +4,10 @@
   "description": "Beacon Works DangerJS workflows.",
   "main": "lib/main.js",
   "scripts": {
-    "lint": "eslint --ext .ts",
     "format": "./node_modules/.bin/prettier --write **/*.ts",
-    "pre-push": "yarn lint && yarn test"
+    "lint": "eslint . --ext .ts",
+    "pre-push": "yarn format && yarn lint && yarn test",
+    "test": "echo \"Error: no test specified\" && exit 0"
   },
   "repository": {
     "type": "git",
