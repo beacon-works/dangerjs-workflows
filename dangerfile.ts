@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { fail, danger, message, warn, GitHubPRDSL } from 'danger';
+import { fail, danger, message, warn, GitHubPRDSL, GitHubUser } from 'danger';
 // this plugin spell checks the code changes in the PR.
 import spellcheck from 'danger-plugin-spellcheck';
 // this spell check is used to analyze the PR title and description
@@ -52,7 +52,7 @@ export interface ExtendedGitHubPRDSL extends GitHubPRDSL {
   mergeable?: boolean;
   mergeable_state?: string;
   rebaseable?: boolean;
-  requested_reviewers?: object[];
+  requested_reviewers?: GitHubUser[];
   requested_teams?: Team[];
 }
 
@@ -189,7 +189,7 @@ export class DangerChecks {
   // Rule: "PR with [noOfApprovals] approvals should then be assigned to [teams]"
   private addReviewTeamsBasedOnApprovals = (teams: string[], noOfApprovals: number): void => {
     const { listReviews, createReviewRequest } = danger.github.api.pulls;
-    const { requested_teams } = this.pr;
+    const { requested_teams, requested_reviewers } = this.pr;
 
     // Return if the team has already been requested
     if (requested_teams && requested_teams.some(team => teams.includes(team.slug))) return;
@@ -197,9 +197,24 @@ export class DangerChecks {
     listReviews(this.prPull).then(resp => {
       const { data } = resp;
       if (data && data.length > 0) {
-        const currentApprovals = data.filter(review => review.state === 'APPROVED').length;
-        // console.log(currentApprovals);
-        if (currentApprovals >= noOfApprovals) {
+        // Capture unique users who've approved the PR.
+        const reviewersWhoApprovedPR: string[] = [
+          ...new Set(data.filter(review => review.state === 'APPROVED').map(review => review.user.login)),
+        ];
+
+        console.log('reviewersWhoApproved--------', reviewersWhoApprovedPR, 'requested---------', requested_reviewers);
+
+        if (requested_reviewers && requested_reviewers.length !== 0) {
+          // Compares approved reviewers against currently requested reviewers. Resolves to true if there's
+          // a match indicating there's a new review request for a user who previously approved the PR.
+          const waitingForReapproval = requested_reviewers.some((requested_reviewer: GitHubUser) =>
+            reviewersWhoApprovedPR.includes(requested_reviewer.login),
+          );
+
+          if (waitingForReapproval) return;
+        }
+
+        if (reviewersWhoApprovedPR.length === noOfApprovals) {
           createReviewRequest({
             ...this.prPull,
             reviewers: [],
