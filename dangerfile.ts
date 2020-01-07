@@ -120,8 +120,6 @@ export class DangerChecks {
     const startsWithLowerCase = new RegExp(/^[a-z]{1}/);
     const endsWithSpecialChar = new RegExp(/([./,;:'"])+$/);
 
-    // console.log(this.pr);
-
     if (title.length < 5) {
       warn('<i>Your PR title seems a bit short. Please provide a bit more context.</i>');
     }
@@ -157,8 +155,6 @@ export class DangerChecks {
     }
 
     if (this.prLabels.includes(manualMergeTag || '')) return;
-
-    // console.log(body);
 
     // matches every code block in the description that starts with ```commit
     const codeBlockRegex = new RegExp(/(`{3}commit)[\r\n]([a-z]*[\s\S]*?)[\r\n](`{3})$/, 'gm');
@@ -239,7 +235,8 @@ export class DangerChecks {
     if (manualMergeTag && this.prLabels.includes(manualMergeTag)) return;
 
     // Return if there are still outstanding reviews requested
-    if (requested_reviewers && requested_reviewers.length >= 1) return;
+    if (requested_reviewers && requested_reviewers.length > 0) return;
+    if (requested_teams && requested_teams.length > 0) return;
 
     if (!locked && !merged && mergeable && mergeable_state !== 'blocked' && rebaseable) {
       // Append PR hash to the end of the title, like how GitHub does it by default.
