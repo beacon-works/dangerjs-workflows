@@ -202,8 +202,6 @@ export class DangerChecks {
           ...new Set(data.filter(review => review.state === 'APPROVED').map(review => review.user.login)),
         ];
 
-        console.log('reviewersWhoApproved--------', reviewersWhoApprovedPR, 'requested---------', requested_reviewers);
-
         if (requested_reviewers && requested_reviewers.length !== 0) {
           // Compares approved reviewers against currently requested reviewers. Resolves to true if there's
           // a match indicating there's a new review request for a user who previously approved the PR.
