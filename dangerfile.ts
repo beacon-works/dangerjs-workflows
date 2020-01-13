@@ -84,7 +84,7 @@ export class DangerChecks {
   // GitHub API: https://octokit.github.io/rest.js
   public run = (): void => {
     if (this.pr.state === 'open') {
-      spellcheck(settings);
+      // spellcheck(settings); // disabling because it's way too strict
 
       this.checkPRTitle();
       this.checkPRDescription();
