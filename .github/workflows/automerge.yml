@@ -1,0 +1,24 @@
+name: danger/dangerjs
+
+on:
+  pull_request:
+    types:
+      - labeled
+      - unlabeled
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  pr-checks:
+    runs-on: ubuntu-latest
+    name: beacon-works/dangerjs-checks
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run dangerjs checks
+        uses: beacon-works/dangerjs-workflows@test-v2
+        # uses: ./
+        with:
+          dangerfile: ' --dangerfile ./dangerflows/pr.automerge.ts'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.BEACON_BOT_PERSONAL_ACCESS_TOKEN }}
