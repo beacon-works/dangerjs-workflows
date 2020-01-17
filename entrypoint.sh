@@ -1,6 +1,6 @@
 #!/bin/sh -l
 
-echo "Hello $1"
+echo "Hello ${INPUT_DANGERFILE}"
 
-yarn danger ci --dangerfile $1
+# yarn danger ci --dangerfile $1
 
