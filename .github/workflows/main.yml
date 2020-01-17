@@ -1,6 +1,9 @@
 name: danger/dangerjs
 
-on: [push]
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: "*/5 * * * *"
 
 jobs:
   pr-checks:
@@ -12,7 +15,7 @@ jobs:
         uses: beacon-works/dangerjs-workflows@testing
         # uses: ./
         with:
-          dangerfile: " --dangerfile ./dangerflows/pr.automerge.ts"
+          dangerfile: " --dangerfile ./dangerfile.ts"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DANGER_GITHUB_API_TOKEN: ${{ secrets.BEACON_BOT_PERSONAL_ACCESS_TOKEN }}
