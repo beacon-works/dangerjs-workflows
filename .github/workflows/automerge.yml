@@ -6,7 +6,8 @@ on:
       - labeled
       - unlabeled
   pull_request_review:
-    types: [submitted]
+    types:
+      - submitted
   status: {}
 
 jobs:
