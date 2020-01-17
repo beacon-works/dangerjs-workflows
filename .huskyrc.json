@@ -1,0 +1,8 @@
+{
+  "hooks": {
+    "post-checkout": "echo $HUSKY_GIT_STDIN",
+    "post-commit": "echo $HUSKY_GIT_STDIN",
+    "post-merge": "echo $HUSKY_GIT_STDIN",
+    "pre-push": "yarn pre-push && echo $HUSKY_GIT_STDIN"
+  }
+}

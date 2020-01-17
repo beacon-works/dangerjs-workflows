@@ -1,0 +1,33 @@
+{
+  "codeSpellCheck": ["**/*.tsx", "**/*.ts", "**/*.jsx", "**/*.js"],
+  "ignore": [
+    "app",
+    "themeprovider",
+    "camelcase",
+    "checkmark",
+    "dangerfile",
+    "dangerjs",
+    "datetime",
+    "describedby",
+    "eslint",
+    "github",
+    "hocs",
+    "libphonenumber",
+    "ionicons",
+    "lfs",
+    "jest",
+    "mergeable",
+    "mocs",
+    "prdsl",
+    "readme",
+    "rebaseable",
+    "refactor",
+    "rnpaper",
+    "rnp",
+    "sabre",
+    "unmount",
+    "workflow",
+    "workflows"
+  ],
+  "whitelistFiles": ["README.md", "dangerfile.ts", ".github/pull_request_template.md"]
+}
