@@ -1,5 +1,7 @@
 name: danger/dangerjs
 
+on: [push]
+
 jobs:
   pr-checks:
     runs-on: ubuntu-latest
