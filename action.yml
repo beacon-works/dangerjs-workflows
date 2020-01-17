@@ -1,13 +1,12 @@
-name: "Beacon Works - DangerJS Workflow"
-description: "Workflow utilizing Danger JS"
-author: "Beacon Works"
+name: 'Beacon Works - DangerJS Workflow'
+description: 'Workflow utilizing Danger JS'
+author: 'Beacon Works'
 inputs:
   dangerfile:
-    description: "Location of dangerfile"
-    required: false
-    default: "./dangerfile.ts"
+    description: 'Location of dangerfile'
+    required: true
 runs:
-  using: "docker"
-  image: "Dockerfile"
+  using: 'docker'
+  image: 'Dockerfile'
   args:
     - ${{ inputs.dangerfile }}
