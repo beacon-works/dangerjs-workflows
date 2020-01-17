@@ -63,12 +63,12 @@ export interface DangerOptions {
 }
 
 export class DangerChecks {
-  private opts: DangerOptions;
-  private pr: ExtendedGitHubPRDSL; // https://danger.systems/js/reference.html#GitHubPRDSL
-  private prPull: PRPull;
-  private prIssue: PRIssue;
-  private prLabels: string[];
-  private mergeCommitBlock: string | undefined;
+  // private opts: DangerOptions;
+  // private pr: ExtendedGitHubPRDSL; // https://danger.systems/js/reference.html#GitHubPRDSL
+  // private prPull: PRPull;
+  // private prIssue: PRIssue;
+  // private prLabels: string[];
+  // private mergeCommitBlock: string | undefined;
 
   constructor(opts: DangerOptions) {
     console.log('just checking!');
@@ -85,21 +85,18 @@ export class DangerChecks {
 
   // GitHub API: https://octokit.github.io/rest.js
   public run = (): void => {
-    if (this.pr.state === 'open') {
-      // spellcheck(settings); // disabling because it's way too strict
-
-      this.checkPRTitle();
-      this.checkPRDescription();
-      // this.checkChangelog();
-      this.addMetaDataAboutPR();
-
-      if (this.prLabels.includes(this.opts.workInProgressTag)) return;
-
-      if (!this.prLabels.includes(this.opts.noQaTag)) {
-        this.addReviewTeamsBasedOnApprovals(['qa'], 2);
-      }
-      this.autoMergePullRequest(this.opts.manualMergeTag);
-    }
+    // if (this.pr.state === 'open') {
+    //   // spellcheck(settings); // disabling because it's way too strict
+    //   this.checkPRTitle();
+    //   this.checkPRDescription();
+    //   // this.checkChangelog();
+    //   this.addMetaDataAboutPR();
+    //   if (this.prLabels.includes(this.opts.workInProgressTag)) return;
+    //   if (!this.prLabels.includes(this.opts.noQaTag)) {
+    //     this.addReviewTeamsBasedOnApprovals(['qa'], 2);
+    //   }
+    //   this.autoMergePullRequest(this.opts.manualMergeTag);
+    // }
   };
 
   // Rule: "PR with specified labels matching teams should assign those teams for reviewers"
