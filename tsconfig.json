@@ -9,5 +9,6 @@
     "resolveJsonModule": true,
     "esModuleInterop": true
   },
+  "include": ["dangerflows"],
   "exclude": ["__test__", "lib", "node_modules"]
 }

@@ -71,6 +71,7 @@ export class DangerChecks {
   private mergeCommitBlock: string | undefined;
 
   constructor(opts: DangerOptions) {
+    if (!danger.github.thisPR) return;
     // tslint:disable-next-line
     const { repo, owner, number } = danger.github.thisPR;
     this.opts = opts;

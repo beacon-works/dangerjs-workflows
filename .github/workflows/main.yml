@@ -12,7 +12,7 @@ jobs:
         uses: beacon-works/dangerjs-workflows@testing
         # uses: ./
         with:
-          dangerfile: " --dangerfile ./dangerfile.ts"
+          dangerfile: " --dangerfile ./dangerflows/pr.automerge.ts"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DANGER_GITHUB_API_TOKEN: ${{ secrets.BEACON_BOT_PERSONAL_ACCESS_TOKEN }}
