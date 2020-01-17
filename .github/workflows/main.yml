@@ -1,6 +1,4 @@
-on:
-  pull_request:
-    types: [opened, edited, synchronize, reopened]
+name: danger/dangerjs
 
 jobs:
   pr-checks:
@@ -9,10 +7,10 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Run dangerjs checks
-        uses: ./
-        # uses: beacon-works/dangerjs-workflows
+        uses: beacon-works/dangerjs-workflows@testing
+        # uses: ./
         with:
-          dangerfile: "./dangerfile.ts"
+          dangerfile: "./wrongfile.ts"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DANGER_GITHUB_API_TOKEN: ${{ secrets.BEACON_BOT_PERSONAL_ACCESS_TOKEN }}

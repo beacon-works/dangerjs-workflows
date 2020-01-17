@@ -4,8 +4,7 @@ author: "Beacon Works"
 inputs:
   dangerfile:
     description: "Location of dangerfile"
-    required: false
-    default: "./dangerfile.ts"
+    required: true
 runs:
   using: "docker"
   image: "Dockerfile"
