@@ -5,6 +5,10 @@ on:
     types:
       - labeled
       - unlabeled
+    branches-ignore:
+      - 'staging'
+      - 'production'
+      - 'master'
   pull_request_review:
     types:
       - submitted

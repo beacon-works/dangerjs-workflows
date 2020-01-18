@@ -1,7 +1,10 @@
 on:
   pull_request:
     types: [opened, edited, synchronize, reopened]
-
+    branches-ignore:
+      - 'staging'
+      - 'production'
+      - 'master'
 jobs:
   pr-checks:
     runs-on: ubuntu-latest
