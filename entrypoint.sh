@@ -1,6 +1,8 @@
 #!/bin/sh -l
 
-echo "Hello $1"
+# TODO: It would be preferred if we can extract the execution in the Dockerfile into this file. 
 
-yarn danger ci --dangerfile $1
+# echo "Hello $1"
+
+# yarn danger ci --dangerfile $1
 
