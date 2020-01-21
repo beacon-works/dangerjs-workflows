@@ -4,7 +4,7 @@ WORKDIR /beacon/workflows
 
 ADD . /beacon/workflows
 
-# RUN yarn install && yarn cache clean
+RUN yarn install && yarn cache clean
 
 ENTRYPOINT cd /beacon/workflows && yarn danger ci --dangerfile ${INPUT_DANGERFILE}
 
