@@ -83,9 +83,9 @@ export class DangerCheck {
         //   return warn('Waiting for a total of 4 approvals. Disabling auto-merge.');
         // }
 
-        // if (this.prLabels.includes(noQaTag) && this.currentApprovals.length < 2) {
-        //   return warn('Waiting for a total of 2 approvals. Disabling auto-merge.');
-        // }
+        if (this.currentApprovals.length < 2) {
+          return warn('Waiting for at least two approval. Disabling auto-merge.');
+        }
 
         if (!merged && mergeable && mergeable_state !== 'blocked' && rebaseable) {
           this.mergeCommitBlock = this.parseCodeBlock();
