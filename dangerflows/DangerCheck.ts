@@ -22,6 +22,7 @@ export class DangerCheck {
   private prPull: PRPull;
   private prIssue: PRIssue;
   private prLabels: string[];
+  private currentApprovals: string[];
   private mergeCommitBlock: string | undefined;
 
   constructor(opts: DangerOptions) {
@@ -33,6 +34,9 @@ export class DangerCheck {
     this.prIssue = { repo, owner, issue_number: number };
     this.prLabels = this.pr.labels ? this.pr.labels.map(label => label.name.toLowerCase()) : [];
     this.mergeCommitBlock = undefined;
+    this.currentApprovals = [];
+
+    this.getListOfCurrentApprovals();
   }
 
   // GitHub API: https://octokit.github.io/rest.js
@@ -50,7 +54,10 @@ export class DangerCheck {
     } = this.pr;
 
     // console.log(this.pr);
-    if (workInProgressTag && this.prLabels.includes(workInProgressTag)) return;
+
+    if (workInProgressTag && this.prLabels.includes(workInProgressTag)) {
+      return warn('Detected a work-in-progress label. Skipping DangerJS checks.');
+    }
 
     if (state === 'open' && !locked) {
       if (checkType === 'pr-checks') {
@@ -68,10 +75,21 @@ export class DangerCheck {
         if (requested_reviewers && requested_reviewers.length > 0) return;
         if (requested_teams && requested_teams.length > 0) return;
 
-        if (manualMergeTag && this.prLabels.includes(manualMergeTag)) return;
+        if (manualMergeTag && this.prLabels.includes(manualMergeTag)) {
+          return warn('Detected a manual merge label. Disabling auto-merge.');
+        }
+
+        // if (!this.prLabels.includes(noQaTag) && this.currentApprovals.length < 4) {
+        //   return warn('Waiting for a total of 4 approvals. Disabling auto-merge.');
+        // }
+
+        // if (this.prLabels.includes(noQaTag) && this.currentApprovals.length < 2) {
+        //   return warn('Waiting for a total of 2 approvals. Disabling auto-merge.');
+        // }
 
         if (!merged && mergeable && mergeable_state !== 'blocked' && rebaseable) {
           this.mergeCommitBlock = this.parseCodeBlock();
+
           this.autoMergePullRequest();
         }
       }
@@ -106,10 +124,12 @@ export class DangerCheck {
       warn("<i>Your PR title is a bit long. Let's keep it under 50 characters.</i>");
     }
 
+    // we should just capitalize for the user
     if (startsWithLowerCase.test(title)) {
       warn("<i>Let's keep PR titles capitalized for consistency.</i>");
     }
 
+    // check and remove periods
     if (endsWithSpecialChar.test(title)) {
       warn("<i>Let's keep PR titles free of periods or special characters at the end.</i>");
     }
@@ -135,6 +155,7 @@ export class DangerCheck {
 
     if (manualMergeTag && this.prLabels.includes(manualMergeTag)) return;
 
+    // extract out into constructor
     const parsedCodeBlock = this.parseCodeBlock();
 
     if (parsedCodeBlock) {
@@ -168,30 +189,31 @@ export class DangerCheck {
 
   // Rule: "PR with [noOfApprovals] approvals should then be assigned to [teams]"
   private addReviewTeamsBasedOnApprovals = (teams: string[], noOfApprovals: number): void => {
-    const { listReviews, createReviewRequest } = danger.github.api.pulls;
+    const { createReviewRequest } = danger.github.api.pulls;
     const { requested_teams } = this.pr;
 
     // Return if the team has already been requested
     if (requested_teams && requested_teams.some(team => teams.includes(team.slug))) return;
 
+    if (this.hasPendingReviewRequests(this.currentApprovals)) return;
+
+    if (noOfApprovals === this.currentApprovals.length) {
+      createReviewRequest({
+        ...this.prPull,
+        reviewers: [],
+        team_reviewers: teams,
+      });
+    }
+  };
+
+  // Capture unique users who's approved the PR.
+  private getListOfCurrentApprovals = (): void => {
+    const { listReviews } = danger.github.api.pulls;
     listReviews(this.prPull).then(resp => {
-      const { data } = resp;
-      if (data && data.length > 0) {
-        // Capture unique users who's approved the PR.
-        const usersWhoApproved: string[] = [
-          ...new Set(data.filter(review => review.state === 'APPROVED').map(review => review.user.login)),
-        ];
-
-        if (this.hasPendingReviewRequests(usersWhoApproved)) return;
-
-        if (noOfApprovals === usersWhoApproved.length) {
-          createReviewRequest({
-            ...this.prPull,
-            reviewers: [],
-            team_reviewers: teams,
-          });
-        }
-      }
+      this.currentApprovals =
+        resp.data && resp.data.length > 0
+          ? [...new Set(resp.data.filter(review => review.state === 'APPROVED').map(review => review.user.login))]
+          : [];
     });
   };
 
@@ -265,11 +287,6 @@ export class DangerCheck {
           body: resp.data.message,
         });
       })
-      .catch(err =>
-        danger.github.api.issues.createComment({
-          ...this.prIssue,
-          body: err,
-        }),
-      );
+      .catch(err => fail(`Attempt to auto-merge failed! ${err}`));
   };
 }
