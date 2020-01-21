@@ -53,7 +53,7 @@ export class DangerCheck {
       state,
     } = this.pr;
 
-    // console.log(this.pr);
+    this.removeExistingBotComments();
 
     if (workInProgressTag && this.prLabels.includes(workInProgressTag)) {
       return warn('Detected a work-in-progress label. Skipping DangerJS checks.');
@@ -94,6 +94,20 @@ export class DangerCheck {
         }
       }
     }
+  };
+
+  private removeExistingBotComments = (): void => {
+    const { repo, owner } = danger.github.thisPR;
+    const { listComments, deleteComment } = danger.github.api.issues;
+    listComments(this.prIssue).then(resp => {
+      if (resp.data && resp.data.length > 0) {
+        resp.data.forEach(comment => {
+          if (comment.user.login === 'beacon-bot') {
+            deleteComment({ repo, owner, comment_id: comment.id });
+          }
+        });
+      }
+    });
   };
 
   // Rule: "PR with specified labels matching teams should assign those teams for reviewers"
