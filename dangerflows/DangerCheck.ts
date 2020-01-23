@@ -262,6 +262,7 @@ export class DangerCheck {
   // performs spellcheck on PR title and description
   private performSpellCheck = (str: string, location: string): void => {
     if (str === null) return;
+    const chRegex = new RegExp(/ch\d+/, 'gi');
     const wordRegex = new RegExp(/\w+/, 'gi');
     const words = str.match(wordRegex);
 
@@ -269,6 +270,7 @@ export class DangerCheck {
       words.forEach(word => {
         // early exit if word is on the ignore list.
         if (settings.ignore.includes(word.toLowerCase())) return;
+        if (word.match(chRegex)) return;
 
         const { misspelled, suggestions } = dictionary.checkAndSuggest(word, 6, 3);
         if (misspelled) {
