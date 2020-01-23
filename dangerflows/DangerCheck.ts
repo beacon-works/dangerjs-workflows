@@ -34,9 +34,7 @@ export class DangerCheck {
     this.prIssue = { repo, owner, issue_number: number };
     this.prLabels = this.pr.labels ? this.pr.labels.map(label => label.name.toLowerCase()) : [];
     this.mergeCommitBlock = undefined;
-    this.currentApprovals = [];
-
-    this.getListOfCurrentApprovals();
+    this.currentApprovals = this.getListOfCurrentApprovals();
   }
 
   // GitHub API: https://octokit.github.io/rest.js
@@ -221,14 +219,18 @@ export class DangerCheck {
   };
 
   // Capture unique users who's approved the PR.
-  private getListOfCurrentApprovals = (): void => {
+  private getListOfCurrentApprovals = async (): Promise<string[] | []> => {
     const { listReviews } = danger.github.api.pulls;
-    listReviews(this.prPull).then(resp => {
-      this.currentApprovals =
+    let approvals: string[] = [];
+
+    await listReviews(this.prPull).then(resp => {
+      approvals =
         resp.data && resp.data.length > 0
           ? [...new Set(resp.data.filter(review => review.state === 'APPROVED').map(review => review.user.login))]
           : [];
     });
+
+    return approvals;
   };
 
   // Compares approved reviewers against currently requested reviewers. Resolves to true if there's
