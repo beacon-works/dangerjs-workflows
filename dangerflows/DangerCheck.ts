@@ -34,11 +34,11 @@ export class DangerCheck {
     this.prIssue = { repo, owner, issue_number: number };
     this.prLabels = this.pr.labels ? this.pr.labels.map(label => label.name.toLowerCase()) : [];
     this.mergeCommitBlock = undefined;
-    this.currentApprovals = this.getListOfCurrentApprovals();
+    this.currentApprovals = [];
   }
 
   // GitHub API: https://octokit.github.io/rest.js
-  public run = (): void => {
+  public run = async (): Promise<void> => {
     const { manualMergeTag, noQaTag, workInProgressTag, checkType } = this.opts;
     const {
       locked,
@@ -51,7 +51,8 @@ export class DangerCheck {
       state,
     } = this.pr;
 
-    this.removeExistingBotComments();
+    await this.getListOfCurrentApprovals();
+    await this.removeExistingBotComments();
 
     if (workInProgressTag && this.prLabels.includes(workInProgressTag)) {
       return warn('Detected a work-in-progress label. Skipping DangerJS checks.');
@@ -94,10 +95,10 @@ export class DangerCheck {
     }
   };
 
-  private removeExistingBotComments = (): void => {
+  private removeExistingBotComments = async (): Promise<void> => {
     const { repo, owner } = danger.github.thisPR;
     const { listComments, deleteComment } = danger.github.api.issues;
-    listComments(this.prIssue).then(resp => {
+    await listComments(this.prIssue).then(resp => {
       if (resp.data && resp.data.length > 0) {
         resp.data.forEach(comment => {
           if (comment.user.login === 'beacon-bot') {
@@ -219,18 +220,15 @@ export class DangerCheck {
   };
 
   // Capture unique users who's approved the PR.
-  private getListOfCurrentApprovals = async (): Promise<string[] | []> => {
+  private getListOfCurrentApprovals = async (): Promise<void> => {
     const { listReviews } = danger.github.api.pulls;
-    let approvals: string[] = [];
 
     await listReviews(this.prPull).then(resp => {
-      approvals =
+      this.currentApprovals =
         resp.data && resp.data.length > 0
           ? [...new Set(resp.data.filter(review => review.state === 'APPROVED').map(review => review.user.login))]
           : [];
     });
-
-    return approvals;
   };
 
   // Compares approved reviewers against currently requested reviewers. Resolves to true if there's
