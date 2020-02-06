@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { fail, danger, message, warn, GitHubPRDSL, GitHubUser } from 'danger';
-// this plugin spell checks the code changes in the PR.
-import spellcheck from 'danger-plugin-spellcheck';
 // this spell check is used to analyze the PR title and description
 import * as SimpleSpellChecker from 'simple-spellchecker';
 
