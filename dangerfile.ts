@@ -1,13 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { fail, danger, message, warn, GitHubPRDSL, GitHubUser } from 'danger';
-// this plugin spell checks the code changes in the PR.
-import spellcheck from 'danger-plugin-spellcheck';
-// this spell check is used to analyze the PR title and description
-import * as SimpleSpellChecker from 'simple-spellchecker';
-
-import settings from './spellcheck.json';
-
-const dictionary = SimpleSpellChecker.getDictionarySync('en-US');
 
 interface GitHubLabel {
   id: number;
@@ -135,8 +127,6 @@ export class DangerChecks {
     if (endsWithSpecialChar.test(title)) {
       warn("<i>Let's keep PR titles free of periods or special characters at the end.</i>");
     }
-
-    this.performSpellCheck(title, 'PR title');
   };
 
   // Rule: "No PR is too small to include a description of why you made a change"
@@ -169,10 +159,6 @@ export class DangerChecks {
         .trim()
         .replace(backTicksWithCommitBlock, '')
         .replace(backTicks, '');
-
-      if (strippedCodeBlock) {
-        this.performSpellCheck(strippedCodeBlock, 'PR description');
-      }
 
       this.mergeCommitBlock = strippedCodeBlock || undefined;
     } else {
@@ -277,29 +263,6 @@ export class DangerChecks {
     const hasChangelog = modified_files.concat(created_files).includes('CHANGELOG.md');
     if (!hasChangelog) {
       warn(`<i>Warning - You may have forgotten to update the CHANGELOG</i>`);
-    }
-  };
-
-  // performs spellcheck on PR title and description
-  private performSpellCheck = (str: string, location: string): void => {
-    if (str === null) return;
-    const wordRegex = new RegExp(/\w+/, 'gi');
-    const words = str.match(wordRegex);
-
-    if (words) {
-      words.forEach(word => {
-        // early exit if word is on the ignore list.
-        if (settings.ignore.includes(word.toLowerCase())) return;
-
-        const { misspelled, suggestions } = dictionary.checkAndSuggest(word, 6, 3);
-        if (misspelled) {
-          const idea =
-            suggestions.length > 0 ? `<br/>Did you maybe mean one of these: <i>${suggestions.join(', ')}</i>?` : '';
-          const message = `Potential typo in ${location}: <b>${word}</b>. ${idea}`;
-
-          warn(message);
-        }
-      });
     }
   };
 }

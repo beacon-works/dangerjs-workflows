@@ -1,7 +1,7 @@
 name: dangerjs
 on:
   pull_request:
-    types: [opened, edited, synchronize, reopened]
+    types: [opened, reopened]
     branches-ignore: [staging, production, master]
 
 jobs:

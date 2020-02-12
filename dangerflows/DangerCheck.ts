@@ -146,8 +146,6 @@ export class DangerCheck {
     if (endsWithSpecialChar.test(title)) {
       warn("<i>Let's keep PR titles free of periods or special characters at the end.</i>");
     }
-
-    this.performSpellCheck(title, 'PR title');
   };
 
   // Rule: "No PR is too small to include a description of why you made a change"
@@ -167,13 +165,6 @@ export class DangerCheck {
     }
 
     if (manualMergeTag && this.prLabels.includes(manualMergeTag)) return;
-
-    // extract out into constructor
-    const parsedCodeBlock = this.parseCodeBlock();
-
-    if (parsedCodeBlock) {
-      this.performSpellCheck(parsedCodeBlock, 'PR description');
-    }
   };
 
   private parseCodeBlock = (): string | undefined => {
@@ -256,31 +247,6 @@ export class DangerCheck {
     const hasChangelog = modified_files.concat(created_files).includes('CHANGELOG.md');
     if (!hasChangelog) {
       warn(`<i>Warning - You may have forgotten to update the CHANGELOG</i>`);
-    }
-  };
-
-  // performs spellcheck on PR title and description
-  private performSpellCheck = (str: string, location: string): void => {
-    if (str === null) return;
-    const chRegex = new RegExp(/ch\d+/, 'gi');
-    const wordRegex = new RegExp(/\w+/, 'gi');
-    const words = str.match(wordRegex);
-
-    if (words) {
-      words.forEach(word => {
-        // early exit if word is on the ignore list.
-        if (settings.ignore.includes(word.toLowerCase())) return;
-        if (word.match(chRegex)) return;
-
-        const { misspelled, suggestions } = dictionary.checkAndSuggest(word, 6, 3);
-        if (misspelled) {
-          const idea =
-            suggestions.length > 0 ? `<br/>Did you maybe mean one of these: <i>${suggestions.join(', ')}</i>?` : '';
-          const message = `Potential typo in ${location}: <b>${word}</b>. ${idea}`;
-
-          warn(message);
-        }
-      });
     }
   };
 
