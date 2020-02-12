@@ -9,13 +9,6 @@ export declare function markdown(message: string): void;
 
 import { PRIssue, PRPull, ExtendedGitHubPRDSL, DangerOptions, GitHubUser } from './types';
 
-// this spell check is used to analyze the PR title and description
-import * as SimpleSpellChecker from 'simple-spellchecker';
-
-const dictionary = SimpleSpellChecker.getDictionarySync('en-US');
-
-import settings from '../spellcheck.json';
-
 export class DangerCheck {
   private opts: DangerOptions;
   private pr: ExtendedGitHubPRDSL; // https://danger.systems/js/reference.html#GitHubPRDSL
