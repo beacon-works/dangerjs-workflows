@@ -9,6 +9,8 @@ export declare function markdown(message: string): void;
 
 import { PRIssue, PRPull, ExtendedGitHubPRDSL, DangerOptions, GitHubUser } from './types';
 
+const clubhouseBaseUrl = 'https://app.clubhouse.io/beacon-works/story';
+
 export class DangerCheck {
   private opts: DangerOptions;
   private pr: ExtendedGitHubPRDSL; // https://danger.systems/js/reference.html#GitHubPRDSL
@@ -43,18 +45,24 @@ export class DangerCheck {
       requested_teams,
       state,
     } = this.pr;
+    const branchRef = this.pr.head.ref;
 
     await this.getListOfCurrentApprovals();
     await this.removeExistingBotComments();
 
     if (workInProgressTag && this.prLabels.includes(workInProgressTag)) {
-      return warn('Detected a work-in-progress label. Skipping DangerJS checks.');
+      return message('Detected a work-in-progress label. Skipping DangerJS checks.');
     }
 
     if (state === 'open' && !locked) {
       if (checkType === 'pr-checks') {
         if (!this.prLabels.includes(noQaTag)) {
           this.addReviewTeamsBasedOnApprovals(['qa'], 2);
+        }
+
+        // Looks for Clubhouse story ID format in branch and creates link to corresponding story on Clubhouse
+        if (branchRef) {
+          this.addLinkToClubhouseStory(branchRef);
         }
 
         this.checkPRTitle();
@@ -68,12 +76,8 @@ export class DangerCheck {
         if (requested_teams && requested_teams.length > 0) return;
 
         if (manualMergeTag && this.prLabels.includes(manualMergeTag)) {
-          return warn('Detected a manual merge label. Disabling auto-merge.');
+          return message('Detected a manual merge label. Disabling auto-merge.');
         }
-
-        // if (!this.prLabels.includes(noQaTag) && this.currentApprovals.length < 4) {
-        //   return warn('Waiting for a total of 4 approvals. Disabling auto-merge.');
-        // }
 
         if (this.currentApprovals.length < 2) {
           return warn('Waiting for at least two approval. Disabling auto-merge.');
@@ -145,16 +149,11 @@ export class DangerCheck {
   private checkPRDescription = (): void => {
     const { manualMergeTag } = this.opts;
     const { body } = this.pr;
-    const clubhouseTicketRegex = new RegExp(/(\/\/.*app\.clubhouse\.io\/beacon-works[\w/-]*)/);
 
     if (body.length < 10) {
       warn(
         '<i>Your PR description seems a bit short. Here are some things to consider: describe your changes, include helpful steps for reviewers, link to Clubhouse ticket, and add a commit code block at the end (if auto-merging).</i>',
       );
-    }
-
-    if (!clubhouseTicketRegex.test(body)) {
-      warn("<i>Is this PR related to a Clubhouse ticket? If so, don't forget to include a reference to it.</i>");
     }
 
     if (manualMergeTag && this.prLabels.includes(manualMergeTag)) return;
@@ -203,7 +202,7 @@ export class DangerCheck {
     }
   };
 
-  // Capture unique users who's approved the PR.
+  // Capture unique users who have approved the PR.
   private getListOfCurrentApprovals = async (): Promise<void> => {
     const { listReviews } = danger.github.api.pulls;
 
@@ -225,6 +224,15 @@ export class DangerCheck {
           usersWhoApproved.includes(requested_reviewer.login),
         )
       : false;
+  };
+
+  private addLinkToClubhouseStory = (refBranch: string): void => {
+    const clubhouseTicketRegex = new RegExp(/ch(\d+)/, 'i');
+    const storyNumber: string | null = refBranch.match(clubhouseTicketRegex)![1] || null;
+
+    if (storyNumber) {
+      message(`Clubhouse Reference: [CH${storyNumber}](${clubhouseBaseUrl}/${storyNumber})`);
+    }
   };
 
   private addMetaDataAboutPR = (): void => {
