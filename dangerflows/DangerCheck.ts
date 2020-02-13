@@ -240,7 +240,7 @@ export class DangerCheck {
 
         await danger.github.api.issues.createComment({
           ...this.prIssue,
-          body: `${resp.data.message} by ${this.pr.user.login}.`,
+          body: `${resp.data.message}.`,
         });
 
         await danger.github.api.git.deleteRef({
