@@ -66,7 +66,7 @@ export class DangerCheck {
         if (branchRef) {
           this.addLinkToClubhouseStory(branchRef);
         }
-        // this.addMetaDataAboutPR(); // example: showing meta data
+        this.addMetaDataAboutPR(); // an example of showing meta data or other useful information
       } else if (checkType === 'automerge') {
         // Return if there are still outstanding reviews requested
         if (requested_reviewers && requested_reviewers.length > 0) return;
@@ -76,9 +76,9 @@ export class DangerCheck {
           return message('Detected a manual merge label. Disabling auto-merge.');
         }
 
-        if (this.currentApprovals.length < 2) {
-          return warn('Waiting for at least two approval. Disabling auto-merge.');
-        }
+        // if (this.currentApprovals.length < 2) {
+        //   return warn('Waiting for at least two approval. Disabling auto-merge.');
+        // }
 
         if (!merged && mergeable && mergeable_state !== 'blocked' && rebaseable) {
           this.autoMergePullRequest();
