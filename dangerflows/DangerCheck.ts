@@ -228,6 +228,7 @@ export class DangerCheck {
 
     this.mergeCommitBlock = this.getCommitDescription();
 
+    console.log('Attempting to merge PR...');
     danger.github.api.pulls
       .merge({
         ...this.prPull,
@@ -236,18 +237,21 @@ export class DangerCheck {
         merge_method: 'squash',
       })
       .then(async resp => {
+        console.log('PR merged successfully.');
         const { repo, owner } = danger.github.thisPR;
 
         await danger.github.api.issues.createComment({
           ...this.prIssue,
           body: `${resp.data.message}.`,
         });
+        console.log('Left comment in PR about successful merge.');
 
         await danger.github.api.git.deleteRef({
           owner,
           repo,
           ref: `heads/${this.branchRef}`,
         });
+        console.log('PR branch deleted.');
       })
       .catch(err => fail(`Attempt to auto-merge failed! ${err}`));
   };
