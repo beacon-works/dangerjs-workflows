@@ -60,16 +60,13 @@ export class DangerCheck {
           this.addReviewTeamsBasedOnApprovals(['qa'], 2);
         }
 
-        // Looks for Clubhouse story ID format in branch and creates link to corresponding story on Clubhouse
+        // this.checkChangelog();
+
+        // Looks for Clubhouse story ID in branch name and creates link to corresponding story in Clubhouse
         if (branchRef) {
           this.addLinkToClubhouseStory(branchRef);
         }
-
-        this.checkPRTitle();
-        this.checkPRDescription();
-        // this.checkChangelog();
-
-        this.addMetaDataAboutPR();
+        // this.addMetaDataAboutPR(); // example: showing meta data
       } else if (checkType === 'automerge') {
         // Return if there are still outstanding reviews requested
         if (requested_reviewers && requested_reviewers.length > 0) return;
@@ -84,8 +81,6 @@ export class DangerCheck {
         }
 
         if (!merged && mergeable && mergeable_state !== 'blocked' && rebaseable) {
-          this.mergeCommitBlock = this.parseCodeBlock();
-
           this.autoMergePullRequest();
         }
       }
@@ -119,86 +114,38 @@ export class DangerCheck {
     }
   };
 
-  // Rule: "No PR is too small to include a title highlighting the changes you made"
-  // https://chris.beams.io/posts/git-commit/
-  private checkPRTitle = (): void => {
+  // Formats title: capitalize first letter, remove special characters from the end.
+  private formatPRTitle = (): string => {
     const { title } = this.pr;
-    const startsWithLowerCase = new RegExp(/^[a-z]{1}/);
     const endsWithSpecialChar = new RegExp(/([./,;:'"])+$/);
 
-    if (title.length < 5) {
-      warn('<i>Your PR title seems a bit short. Please provide a bit more context.</i>');
-    }
-
-    if (title.length > 50) {
-      warn("<i>Your PR title is a bit long. Let's keep it under 50 characters.</i>");
-    }
-
-    // we should just capitalize for the user
-    if (startsWithLowerCase.test(title)) {
-      warn("<i>Let's keep PR titles capitalized for consistency.</i>");
-    }
-
-    // check and remove periods
-    if (endsWithSpecialChar.test(title)) {
-      warn("<i>Let's keep PR titles free of periods or special characters at the end.</i>");
-    }
+    return `${title.slice(0, 1).toUpperCase() + title.slice(1)}`.replace(endsWithSpecialChar, '');
   };
 
-  // Rule: "No PR is too small to include a description of why you made a change"
-  private checkPRDescription = (): void => {
-    const { manualMergeTag } = this.opts;
-    const { body } = this.pr;
-
-    if (body.length < 10) {
-      warn(
-        '<i>Your PR description seems a bit short. Here are some things to consider: describe your changes, include helpful steps for reviewers, link to Clubhouse ticket, and add a commit code block at the end (if auto-merging).</i>',
-      );
-    }
-
-    if (manualMergeTag && this.prLabels.includes(manualMergeTag)) return;
-  };
-
-  private parseCodeBlock = (): string | undefined => {
+  private getCommitDescription = (): string | undefined => {
     const { body } = this.pr;
     // matches every code block in the description that starts with ```commit
-    const codeBlockRegex = new RegExp(/(`{3}commit)[\r\n]([a-z]*[\s\S]*?)[\r\n](`{3})$/, 'gm');
-    const codeBlocks: string[] | null = body.match(codeBlockRegex) || null;
+    const commitBlockRegex = new RegExp(/(`{3}commit)[\r\n]([a-z]*[\s\S]*?)[\r\n](`{3})$/, 'gm');
+    const commitBlocks: string[] | null = body.match(commitBlockRegex);
 
-    if (codeBlocks) {
+    if (commitBlocks) {
       const backTicksWithCommitBlock = new RegExp(/(`{3}commit)(\r\n)/, 'g');
       const backTicks = new RegExp(/(`{3})/, 'g');
+      const onlyLineBreaks = new RegExp(/^(\r\n)+$/);
+      // Rule: if there are multiple ```commit blocks, we only care about the last one
+      const lastCommitBlock: string = commitBlocks[commitBlocks.length - 1];
+      const strippedCommitBlock: string = lastCommitBlock
+        .trim()
+        .replace(backTicksWithCommitBlock, '')
+        .replace(backTicks, '');
 
-      const lastCodeBlock: string = codeBlocks[codeBlocks.length - 1];
-      return (
-        lastCodeBlock
-          .trim()
-          .replace(backTicksWithCommitBlock, '')
-          .replace(backTicks, '') || undefined
-      );
-    } else {
-      fail(
-        "Oops! It looks like you're missing a commit block in the description of your PR. I use this to auto-merge your PR. Simply create a code block starting with <i>```commit</i> at the bottom of your description. Include a longer commit message inside, if necessary—otherwise, leave it as an empty code block.",
-      );
-    }
-  };
+      if (strippedCommitBlock.match(onlyLineBreaks)) {
+        fail(
+          'Detected an empty commit code block. Did you mean to leave a commit description? If not, remove the ```commit code block.',
+        );
+      }
 
-  // Rule: "PR with [noOfApprovals] approvals should then be assigned to [teams]"
-  private addReviewTeamsBasedOnApprovals = (teams: string[], noOfApprovals: number): void => {
-    const { createReviewRequest } = danger.github.api.pulls;
-    const { requested_teams } = this.pr;
-
-    // Return if the team has already been requested
-    if (requested_teams && requested_teams.some(team => teams.includes(team.slug))) return;
-
-    if (this.hasPendingReviewRequests(this.currentApprovals)) return;
-
-    if (noOfApprovals === this.currentApprovals.length) {
-      createReviewRequest({
-        ...this.prPull,
-        reviewers: [],
-        team_reviewers: teams,
-      });
+      return strippedCommitBlock;
     }
   };
 
@@ -242,6 +189,25 @@ export class DangerCheck {
     );
   };
 
+  // Rule: "PR with [noOfApprovals] approvals should then be assigned to [teams]"
+  private addReviewTeamsBasedOnApprovals = (teams: string[], noOfApprovals: number): void => {
+    const { createReviewRequest } = danger.github.api.pulls;
+    const { requested_teams } = this.pr;
+
+    // Return if the team has already been requested
+    if (requested_teams && requested_teams.some(team => teams.includes(team.slug))) return;
+
+    if (this.hasPendingReviewRequests(this.currentApprovals)) return;
+
+    if (noOfApprovals === this.currentApprovals.length) {
+      createReviewRequest({
+        ...this.prPull,
+        reviewers: [],
+        team_reviewers: teams,
+      });
+    }
+  };
+
   // Rule: "No PR is too small to include in the changelog"
   private checkChangelog = (): void => {
     const { modified_files, created_files } = danger.git;
@@ -252,10 +218,12 @@ export class DangerCheck {
   };
 
   private autoMergePullRequest = (): void => {
-    const { title } = this.pr;
+    const formattedTitle = this.formatPRTitle();
 
     // Append PR hash to the end of the title, like how GitHub does it by default.
-    const titleWithPRHash = `${title} (#${this.pr.number})`;
+    const titleWithPRHash = `${formattedTitle} (#${this.pr.number})`;
+
+    this.mergeCommitBlock = this.getCommitDescription();
 
     danger.github.api.pulls
       .merge({
