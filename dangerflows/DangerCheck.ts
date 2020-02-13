@@ -17,17 +17,20 @@ export class DangerCheck {
   private prPull: PRPull;
   private prIssue: PRIssue;
   private prLabels: string[];
-  private currentApprovals: string[];
+  private branchRef: string;
   private mergeCommitBlock: string | undefined;
+  private currentApprovals: string[];
 
   constructor(opts: DangerOptions) {
     // tslint:disable-next-line
     const { repo, owner, number } = danger.github.thisPR;
+
     this.opts = opts;
     this.pr = danger.github.pr;
     this.prPull = { repo, owner, pull_number: number };
     this.prIssue = { repo, owner, issue_number: number };
     this.prLabels = this.pr.labels ? this.pr.labels.map(label => label.name.toLowerCase()) : [];
+    this.branchRef = this.pr.head.ref;
     this.mergeCommitBlock = undefined;
     this.currentApprovals = [];
   }
@@ -45,7 +48,6 @@ export class DangerCheck {
       requested_teams,
       state,
     } = this.pr;
-    const branchRef = this.pr.head.ref;
 
     await this.getListOfCurrentApprovals();
     await this.removeExistingBotComments();
@@ -63,8 +65,8 @@ export class DangerCheck {
         // this.checkChangelog();
 
         // Looks for Clubhouse story ID in branch name and creates link to corresponding story in Clubhouse
-        if (branchRef) {
-          this.addLinkToClubhouseStory(branchRef);
+        if (this.branchRef) {
+          this.addLinkToClubhouseStory(this.branchRef);
         }
         this.addMetaDataAboutPR(); // an example of showing meta data or other useful information
       } else if (checkType === 'automerge') {
@@ -233,10 +235,13 @@ export class DangerCheck {
         merge_method: 'squash',
       })
       .then(resp => {
+        const { repo, owner } = danger.github.thisPR;
+
         danger.github.api.issues.createComment({
           ...this.prIssue,
           body: resp.data.message,
         });
+        danger.github.api.git.deleteRef({ owner, repo, ref: this.branchRef });
       })
       .catch(err => fail(`Attempt to auto-merge failed! ${err}`));
   };
