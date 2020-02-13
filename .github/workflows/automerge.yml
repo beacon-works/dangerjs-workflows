@@ -3,7 +3,7 @@ name: dangerjs
 on:
   status: {}
   pull_request:
-    types: [edited, labeled, unlabeled, ready_for_review, review_requested, review_request_removed]
+    types: [edited, labeled, unlabeled, ready_for_review, review_requested, review_request_removed, synchronize]
     branches-ignore: [staging, production, master]
   pull_request_review:
     types: [submitted]
