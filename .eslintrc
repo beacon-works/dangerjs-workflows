@@ -18,6 +18,8 @@
   ],
   "rules": {
     "no-console": "warn",
-    "@typescript-eslint/no-use-before-define": 0
+    "@typescript-eslint/no-use-before-define": 0,
+    "@typescript-eslint/prefer-regexp-exec": 0,
+    "@typescript-eslint/no-non-null-assertion": 0
   }
 }

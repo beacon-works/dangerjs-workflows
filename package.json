@@ -26,8 +26,7 @@
   },
   "homepage": "https://github.com/beacon-works/dangerjs-workflows#readme",
   "dependencies": {
-    "danger": "^9.2.9",
-    "simple-spellchecker": "^1.0.0"
+    "danger": "^9.2.9"
   },
   "devDependencies": {
     "@types/jest": "^24.0.13",
