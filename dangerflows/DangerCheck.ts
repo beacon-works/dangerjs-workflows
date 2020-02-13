@@ -235,15 +235,15 @@ export class DangerCheck {
         commit_message: this.mergeCommitBlock,
         merge_method: 'squash',
       })
-      .then(resp => {
+      .then(async resp => {
         const { repo, owner } = danger.github.thisPR;
 
-        danger.github.api.issues.createComment({
+        await danger.github.api.issues.createComment({
           ...this.prIssue,
           body: `${resp.data.message} by ${this.pr.user.login}.`,
         });
 
-        danger.github.api.git.deleteRef({
+        await danger.github.api.git.deleteRef({
           owner,
           repo,
           ref: `heads/${this.branchRef}`,
