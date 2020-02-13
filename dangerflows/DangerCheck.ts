@@ -78,9 +78,9 @@ export class DangerCheck {
           return message('Detected a manual merge label. Disabling auto-merge.');
         }
 
-        // if (this.currentApprovals.length < 2) {
-        //   return warn('Waiting for at least two approval. Disabling auto-merge.');
-        // }
+        if (this.pr.head.repo.name !== 'dangerjs-workflows' && this.currentApprovals.length < 2) {
+          return warn('Waiting for at least two approval. Disabling auto-merge.');
+        }
 
         if (!merged && mergeable && mergeable_state !== 'blocked' && rebaseable) {
           this.autoMergePullRequest();
@@ -177,7 +177,8 @@ export class DangerCheck {
 
   private addLinkToClubhouseStory = (refBranch: string): void => {
     const clubhouseTicketRegex = new RegExp(/ch(\d+)/, 'i');
-    const storyNumber: string | null = refBranch.match(clubhouseTicketRegex)![1] || null;
+    const storyNumber: string | false =
+      !!refBranch.match(clubhouseTicketRegex) && refBranch.match(clubhouseTicketRegex)![1];
 
     if (storyNumber) {
       message(`Clubhouse Reference: [CH${storyNumber}](${clubhouseBaseUrl}/${storyNumber})`);
@@ -234,14 +235,19 @@ export class DangerCheck {
         commit_message: this.mergeCommitBlock,
         merge_method: 'squash',
       })
-      .then(resp => {
+      .then(async resp => {
         const { repo, owner } = danger.github.thisPR;
 
-        danger.github.api.issues.createComment({
+        await danger.github.api.issues.createComment({
           ...this.prIssue,
-          body: resp.data.message,
+          body: `${resp.data.message} by ${this.pr.user.login}.`,
         });
-        danger.github.api.git.deleteRef({ owner, repo, ref: this.branchRef });
+
+        await danger.github.api.git.deleteRef({
+          owner,
+          repo,
+          ref: `heads/${this.branchRef}`,
+        });
       })
       .catch(err => fail(`Attempt to auto-merge failed! ${err}`));
   };
